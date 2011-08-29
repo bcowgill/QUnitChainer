@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../qunitchainer.css" type="text/css"/>
+    <script src="../jquery/jquery-1.6.2.min.js"></script>
+
+   <script language="javascript">
+   var bPass = true;
+
+   $(document).ready(function () {
+      setInterval(function () {
+         var class = bPass ? 'qunit-fail' : 'qunit-pass';
+         bPass = !bPass;
+         $('#qunit-banner').removeClass('qunit-pass').removeClass('qunit-fail').addClass(class);
+      }, 1000);
+   });
+   </script>
+
+  </head>
+<body>
+
+<h1 id="qunit-header">qunit-header ABCDEFGHIJKLMNOPQRTSUVWXYZ <a href="#">ANCHOR</a></h1>
+
+<h2 id="qunit-banner" class="qunit-pass">qunit-banner qunit-pass/fail ABCDEFGHIJKLMNOPQRTSUVWXYZ</h2>
+
+<div id="qunit-testrunner-toolbar"><br/><br/><br/>qunit-testrunner-toolbar ABCDEFGHIJKLMNOPQRTSUVWXYZ</div>
+
+<h2 id="qunit-userAgent">qunit-userAgent ABCDEFGHIJKLMNOPQRTSUVWXYZ</h2>
+
+<p id="qunit-testresult" class="result">
+
+qunit-testresult
+0
+Tests completed in 72 milliseconds.<br>
+<span class="passed">passed 7</span>
+tests of
+<span class="total">total 10</span>
+passed,
+<span class="failed">failed 3</span>
+failed.
+</p>
+
+<ol id="qunit-tests">
+qunit-tests ABCDEFGHIJKLMNOPQRTSUVWXYZ
+
+<li class="pass" id="test-output0">
+   <strong><span class="module-name">module-name ABCDEFGHIJKLMNOPQRTSUVWXYZ</span>:
+   <span class="test-name">test-name ABCDEFGHIJKLMNOPQRTSUVWXYZ</span>
+   <b class="counts">counts (<b class="failed"> failed 0</b>, <b class="passed">passed 1</b>, 1)</b></strong>
+   <a href="/C:/Users/me/Documents/sandbox/ipad-testing/q-test2.html?filter=Basic%20Unit%20Test%3A%20Sample%20test">Rerun ABCDEFGHIJKLMNOPQRTSUVWXYZ</a>
+   <ol style="display: block;">
+      <li class="pass"><span class="test-message">test-message ABCDEFGHIJKLMNOPQRTSUVWXYZ divide(4,2) should be 2</span>
+         <table>
+            <tbody><tr class="test-expected"><th>test-expected Expected: </th><td><pre>pre 2</pre></td></tr>
+            </tbody></table>
+      </li>
+   </ol>
+</li>
+
+<li class="fail" id="test-output2">
+   <strong><span class="module-name">module-name ABCDEFGHIJKLMNOPQRTSUVWXYZ</span>:
+   <span class="test-name">test-name ABCDEFGHIJKLMNOPQRTSUVWXYZ</span>
+   <b class="counts">counts (<b class="failed">failed 1</b>, <b class="passed">passed 2</b>, 3)</b></strong>
+   <a href="/C:/Users/me/Documents/sandbox/ipad-testing/q-test2.html?filter=Failing%20Unit%20Test%20with%20setup%20and%20teardown%20code%3A%20Sample%20test%20fails">Rerun ABCDEFGHIJKLMNOPQRTSUVWXYZ</a>
+   <ol>
+      <li class="pass">setup tests: one extra assert per test ABCDEFGHIJKLMNOPQRTSUVWXYZ</li>
+      <li class="fail"><span class="test-message">test-message ABCDEFGHIJKLMNOPQRTSUVWXYZ divide(4,2) should be 3</span>
+         <table>
+            <tbody><tr class="test-expected"><th>test-expected Expected: </th><td><pre>pre 3</pre></td></tr>
+            <tr class="test-actual"><th>test-actual Result: </th><td><pre>pre 2</pre></td></tr>
+            <tr class="test-diff"><th>test-diff Diff: </th><td><pre><del>del 3 </del><ins>ins 2 </ins></pre></td></tr>
+            <tr class="test-source"><th>test-source Source: </th><td><pre>pre ()@file:///C:/Users/me/Documents/sandbox/ipad-testing/test-plan.js:40</pre></td></tr>
+            </tbody></table>
+      </li>
+      <li class="pass">teardown tests: and one extra assert after each test ABCDEFGHIJKLMNOPQRTSUVWXYZ</li>
+   </ol>
+</li>
+
+</ol>
+
+</body>
+
+</html>
