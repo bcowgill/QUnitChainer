@@ -1,6 +1,9 @@
 [QUnitChainer](https://github.com/bcowgill/QUnitChainer) - An Auto Runner for the QUnit JavaScript Unit Testing framework.
 ================================
 
+You can get the latest minimal release files from this URL:
+https://github.com/bcowgill/QUnitChainer/blob/master/release/QUnitChainer.tar.gz?raw=true
+
 QUnitChainer is a Javascript file with an HTML control page which allows you to
 run any number of QUnit test plans one after the other and then get a summary
 of which test plans pass and fail. The summary page allows you to click through
