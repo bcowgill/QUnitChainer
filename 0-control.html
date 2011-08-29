@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--
+   The control page for QUnitChainer tests.
+-->
+<html>
+  <head>
+    <link rel="stylesheet" href="qunitchainer.css" type="text/css"/>
+    <script src="jquery/jquery-1.6.2.min.js"> </script>
+    <script type="text/javascript" src="QUnitChainer.js"></script>
+<!--[if lt IE 8 ]> <script language="javascript" src="json2/json2.js"></script> <![endif]-->
+    <script type="text/javascript">
+var Plan = {
+  // Specify the first test plan to run.
+  nextTestPlan: 'sample/q-test.html',
+  // Specify that we are the control page so that QUnitChainer initialises itself accordingly
+  bControl: true
+};
+QUnitChainer.init();
+if (!QUnitChainer.checkStorage()) {
+   alert("This will not work as it appears your browser does not support HTML5 storage.\n\nYou might need to run this from a local web server (i.e. apache, lighttpd, nginx) or through a web proxy (i.e. Charles) if your browser does support HTML5 storage");
+}
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
