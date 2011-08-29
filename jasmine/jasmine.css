@@ -101,12 +101,14 @@ body {
   padding-right: 1em;
 }
 
-.passed {
+/* BSAC was interfering with qunit style values so added .jasmine_reporter to contain it */
+.jasmine_reporter .passed {
   background-color: #cfc;
   display: none;
 }
 
-.failed {
+/* BSAC was interfering with qunit style values so added .jasmine_reporter to contain it */
+.jasmine_reporter .failed {
   background-color: #fbb;
 }
 
@@ -163,4 +165,9 @@ body {
   display: block;
   margin: 5px 0;
   padding: 2px 0 2px 10px;
+}
+
+/* BSAC interfered with qunit.css to added rule to ensure the passing banner is visible */
+.runner.passed {
+  display: block;
 }
