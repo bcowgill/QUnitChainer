@@ -34,13 +34,13 @@
     failed, getDefaultProperties, getProperties, getProperty, getTestResults,
     handleAutoRun, header, host, href, html, init, initControlPage, initTests,
     injectControlPage, innerHTML, installQUnitHandlers, jqInjectAt, location,
-    log, maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart,
+    log, logIt, maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart,
     myAlert, name, nextTestPlan, not, passed, plan, protocol, renderPage,
-    replace, runtime, setLocation, setProperty, showControlPage, skey, storage,
-    storeProperties, storeTestResults, stringifyObj, testIdx, testPlan,
-    testStart, tests, text, this, title, toBeDefined, toBeEqualAsHtml,
-    toBeUndefined, toEqual, toHaveBeenCalled, toHaveBeenCalledWith, toMatch,
-    total, userAgent, value, wipeQUnitOutput
+    replace, reset, runtime, setLocation, setProperty, showControlPage, skey,
+    storage, storeProperties, storeTestResults, stringifyObj, testIdx,
+    testPlan, testStart, tests, text, this, title, toBeDefined,
+    toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled,
+    toHaveBeenCalledWith, toMatch, total, userAgent, value, wipeQUnitOutput
 */
 
 if (!window.console) {
@@ -50,7 +50,7 @@ if (!window.console) {
 var Test = {
    'bLog': false,
 
-   'VERSION': '$Id$',
+   'VERSION': '1.0 $Id$',
    'NUM_PROPERTIES': 6,
    'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage'],
    'Checkboxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
@@ -147,7 +147,7 @@ afterEach(function () {
 
 describe("QUnitChainer.checkStorage() - test plan will not work unless browser version supports storage (this could fail if you load the page from disk or from localhost instead of from a hosted domain.)", function () {
    it("should support " + QUnitChainer.storage, function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 1 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 1 ' + QUnitChainer.bLog);
       expect(QUnitChainer.checkStorage()).toEqual(true);
    });
 });
@@ -160,18 +160,18 @@ describe("QUnitChainer.getDefaultProperties() - default Properties are all false
    });
 
    it("should have only " + Test.NUM_PROPERTIES + " Properties values", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 2 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 2 ' + QUnitChainer.bLog);
       expect(getKeys(rProperties).length).toEqual(Test.NUM_PROPERTIES);
    });
 
    // Must put these tests inside a function to prevent a closure in the for loop below.
    function testPropertiesFalse(key) {
       it("should have " + key + " set to false", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 3 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 3 ' + QUnitChainer.bLog);
          expect(key + ' ' + rProperties[key]).toEqual(key + ' false');
       });
       it("should have initial Property of " + key + " set to false", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 4 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 4 ' + QUnitChainer.bLog);
 
          expect(key + ' ' + QUnitChainer.getProperty(key)).toEqual(key + ' false');
       });
@@ -188,30 +188,30 @@ describe("QUnitChainer.setProperty/getProperty/storeProperties/getProperties - s
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set Properties) called');
 
       for (idx = 0; idx < Test.Properties.length; ++idx) {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD A ' + Test.Properties[idx] + ' ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD A ' + Test.Properties[idx] + ' ' + QUnitChainer.bLog);
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD B ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD B ' + QUnitChainer.bLog);
       QUnitChainer.storeProperties();
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD C ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD C ' + QUnitChainer.bLog);
       for (idx = 0; idx < Test.Properties.length; ++idx) {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD D ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD D ' + QUnitChainer.bLog);
          QUnitChainer.setProperty(Test.Properties[idx], false);
       }
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD E ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD E ' + QUnitChainer.bLog);
       rProperties = QUnitChainer.getProperties();
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD F ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD F ' + QUnitChainer.bLog);
    });
 
    it("should have only " + Test.NUM_PROPERTIES + " Properties values", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 5 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 5 ' + QUnitChainer.bLog);
       expect(getKeys(rProperties).length).toEqual(Test.NUM_PROPERTIES);
    });
 
    // Must put these tests inside a function to prevent a closure in the for loop below.
    function testPropertiesTrue(key) {
       it("should have " + key + " set to true", function () {
-            QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 6 ' + QUnitChainer.bLog);
+            //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 6 ' + QUnitChainer.bLog);
 
          expect(key + ' ' + rProperties[key]).toEqual(key + ' true');
       });
@@ -224,12 +224,12 @@ describe("QUnitChainer.setProperty/getProperty/storeProperties/getProperties - s
 
 describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    it('should be defined', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 7 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 7 ' + QUnitChainer.bLog);
       expect(QUnitChainer.stringifyObj).toBeDefined();
    });
 
    it('should suround braces with line breaks', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 8 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 8 ' + QUnitChainer.bLog);
       var obj = {},
          expected = "<br/>{<br/>   <br/>}<br/>",
          result = QUnitChainer.stringifyObj(obj);
@@ -238,7 +238,7 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    });
 
    it('should suround brackets with line breaks', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 9 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 9 ' + QUnitChainer.bLog);
       var obj = [],
          expected = "<br/>[<br/>   <br/>]<br/>",
          result = QUnitChainer.stringifyObj(obj);
@@ -247,7 +247,7 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    });
 
    it('should line break after commas', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 10 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 10 ' + QUnitChainer.bLog);
       var obj = [1, 2],
          expected = "<br/>[<br/>   1,<br/>   2<br/>]<br/>",
          result = QUnitChainer.stringifyObj(obj);
@@ -256,7 +256,7 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    });
 
    it('should space out colons', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 11 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 11 ' + QUnitChainer.bLog);
       var obj = {'this': 'that'},
          expected = '<br/>{<br/>   "this": "that"<br/>}<br/>',
          result = QUnitChainer.stringifyObj(obj);
@@ -267,7 +267,7 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
 
 describe("QUnitChainer.injectControlPage() Control Page - inject into document", function () {
    it('should default to non-control page mode', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 12 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 12 ' + QUnitChainer.bLog);
       expect(QUnitChainer.bIsControlPage).toEqual(false);
    });
 });
@@ -278,7 +278,7 @@ describe("QUnitChainer.injectControlPage() Control Page - inject into document",
    });
 
    it('should have a h1#qunit-header on the page', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 13 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 13 ' + QUnitChainer.bLog);
       expect(jQuery('h1#qunit-header').length).toEqual(1);
    });
 
@@ -299,7 +299,7 @@ describe("QUnitChainer.injectControlPage() Control Page - inject into document",
    });
 
    it('should have a div#qunitchainer-dump on the page', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 14 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 14 ' + QUnitChainer.bLog);
       expect(jQuery('div#qunitchainer-dump').length).toEqual(1);
    });
 });
@@ -316,9 +316,11 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
       document.title = title;
    });
 
-   it('should have a document title of "\u2716 QUnitChainer Control Page"', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 15 ' + QUnitChainer.bLog);
-      expect(jQuery('title').html()).toEqual("\u2716 QUnitChainer Control Page");
+   //TODO older OS (Win2000) won't show unicode cross mark. need a flag to control how we show pass/fail in title bar
+   //it('should have a document title of "\u2716 QUnitChainer Control Page"', function () {
+   it('should have a document title of "FAIL - QUnitChainer Control Page"', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 15 ' + QUnitChainer.bLog);
+      expect(jQuery('title').html()).toEqual("FAIL - QUnitChainer Control Page");
    });
 
    it('should have a header of "QUnitChainer Control Page"', function () {
@@ -382,7 +384,7 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
    });
 
    it('should have a message showing no tests plans are in storage', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 16 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 16 ' + QUnitChainer.bLog);
       expect(jQuery('#qunit-tests').text()).toBeEqualAsHtml(Test.NoTestRunsMessage);
    });
 });
@@ -402,7 +404,7 @@ describe("QUnitChainer.showControlPage() Control Page - checkbox state defaults 
    // Must put these tests inside a function to prevent a closure in the for loop below.
    function testCheckboxFalse(key) {
       it("should have checkbox " + key + " UNCHECKED", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 17 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 17 ' + QUnitChainer.bLog);
          expect(key + ' ' + jQuery('input[type="checkbox"][name="' + key + '"]')[0].checked).toEqual(key + ' false');
       });
    }
@@ -434,7 +436,7 @@ describe("QUnitChainer.updateControlFields() Control Page - checkbox state defau
    });
 
    it("should have text field testPlan set to next-test-plan.html", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 18 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 18 ' + QUnitChainer.bLog);
       expect('testPlan ' + jQuery('input[type="text"][name="testPlan"]')[0].value).toEqual('testPlan next-test-plan.html');
    });
 
@@ -450,7 +452,7 @@ describe("QUnitChainer.updateControlFields() Control Page - checkbox state defau
    }
 
    it("should have bFollowChain cleared in storage", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 19 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 19 ' + QUnitChainer.bLog);
       expect(rStorage.bFollowChain).toEqual(false);
    });
 });
@@ -467,7 +469,7 @@ describe("QUnitChainer.debugStorage() - Provide debugging info about storage", f
    });
 
    it("should have storage formatted in a debug string", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 20 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 20 ' + QUnitChainer.bLog);
       expect(QUnitChainer.debugStorage('DEBUG', 30)).toBeEqualAsHtml(Test.ExpectDebugStorage);
    });
 });
@@ -494,7 +496,7 @@ describe("QUnitChainer.showStorage() Control Page - Properties and Test Summary 
    });
 
    it("should have Properties displayed in storage dump area", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 21 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 21 ' + QUnitChainer.bLog);
       expect(jQuery('#qunitchainer-dump').html()).toBeEqualAsHtml(Test.ExpectDumpStorage);
    });
 });
@@ -516,12 +518,14 @@ describe("QUnitChainer.showTestSummary() Control Page - Banner class set for Suc
       Plan = {};
    });
 
+   //TODO Older OS (Win2000) won't show unicode check mark. Need a flag to control ho we show pass/fail in title bar
+   //it('should have a document title of "\u2714 QUnitChainer Control Page"', function () {
    it('should have a document title of "\u2714 QUnitChainer Control Page"', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 22 ' + QUnitChainer.bLog);
-      expect(jQuery('title').html()).toEqual("\u2714 QUnitChainer Control Page");
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 22 ' + QUnitChainer.bLog);
+      expect(jQuery('title').html()).toEqual("QUnitChainer Control Page");
    });
    it("should have the success class added to the banner line", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 23 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 23 ' + QUnitChainer.bLog);
       expect(jQuery('#qunit-banner').attr('class')).toEqual('qunit-pass');
    });
 });
@@ -549,7 +553,7 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered an
    });
 
    it("should have the failure class added to the banner line", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 24 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 24 ' + QUnitChainer.bLog);
       expect(jQuery('#qunit-banner').attr('class')).toEqual('qunit-fail');
    });
 
@@ -607,7 +611,7 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered an
       expect(jQuery('#test-dom-output #qunit-tests>li:last li').attr('class')).toEqual('pass');
    });
    it("should have (0,1,1) as fail/pass/total for q-test4.html test plan in 'after change'", function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 25 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 25 ' + QUnitChainer.bLog);
       expect(jQuery('#test-dom-output #qunit-tests>li:last li>b.counts').text()).toEqual('(0, 1, 1)');
    });
 
@@ -636,7 +640,7 @@ describe("QUnitChainer.clickPause() Control Page - clicking Pause checkbox clear
    // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the pause and auto-run checkboxes checked and saved to storage', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 26 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 26 ' + QUnitChainer.bLog);
          waits(100);
          runs(function () {
             rStorage = QUnitChainer.getProperties();
@@ -673,7 +677,7 @@ describe("QUnitChainer.clickAutoRun() Control Page - clicking Auto Run checkbox 
    // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the auto run, pause checkboxes cleared and saved to storage', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 27 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 27 ' + QUnitChainer.bLog);
          expect('#bAutoRun ' + jQuery('#bAutoRun')[0].checked).toEqual('#bAutoRun true');
          expect('#bPause ' + jQuery('#bPause')[0].checked).toEqual('#bPause false');
          expect('bAutoRun ' + rStorage.bAutoRun).toEqual('bAutoRun true');
@@ -705,7 +709,7 @@ describe("QUnitChainer.clickLog() Control Page - clicking Log checkbox changes v
    // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the log checkbox checked and in storage', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 28 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 28 ' + QUnitChainer.bLog);
          expect('#bLog ' + jQuery('#bLog')[0].checked).toEqual('#bLog true');
          expect('bLog ' + rStorage.bLog).toEqual('bLog true');
       });
@@ -733,7 +737,7 @@ describe("QUnitChainer.clickDumpStorage() Control Page - clicking Dump Storage c
    // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the dump storage checkbox checked and in storage and visible on page', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 29 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 29 ' + QUnitChainer.bLog);
          expect('#bDumpStorage ' + jQuery('#bDumpStorage')[0].checked).toEqual('#bDumpStorage true');
          expect('bDumpStorage ' + rStorage.bDumpStorage).toEqual('bDumpStorage true');
          expect(jQuery('#qunitchainer-dump').html()).toMatch('"bDumpStorage": true');
@@ -764,7 +768,7 @@ describe("QUnitChainer.clickDumpStorage() Control Page - clicking Dump Storage c
    // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the dump storage checkbox unchecked and in storage and visible on page', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 30 ' + QUnitChainer.bLog);
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 30 ' + QUnitChainer.bLog);
          expect('#bDumpStorage ' + jQuery('#bDumpStorage')[0].checked).toEqual('#bDumpStorage false');
          expect('bDumpStorage ' + rStorage.bDumpStorage).toEqual('bDumpStorage false');
          expect(jQuery('#qunitchainer-dump').html()).toEqual('');
@@ -803,10 +807,10 @@ describe("QUnitChainer.clickAlertStorage() Control Page - clicking Alert Storage
    // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the alert storage checkbox checked and saved in storage', function () {
-      QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 31 ' + QUnitChainer.bLog);
-         QUnitChainer.logIt(Test.bLog, 'Running it ');
-         QUnitChainer.logIt(Test.bLog, JSON.stringify(QUnitChainer));
-         QUnitChainer.logIt(Test.bLog, JSON.stringify(rStorage));
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 31 ' + QUnitChainer.bLog);
+         //QUnitChainer.logIt(Test.bLog, 'Running it ');
+         //QUnitChainer.logIt(Test.bLog, JSON.stringify(QUnitChainer));
+         //QUnitChainer.logIt(Test.bLog, JSON.stringify(rStorage));
          expect('#bAlertStorage ' + jQuery('#bAlertStorage')[0].checked).toEqual('#bAlertStorage true');
          expect('bAlertStorage ' + rStorage.bAlertStorage).toEqual('bAlertStorage true');
 
@@ -820,7 +824,7 @@ describe("QUnitChainer.clickAlertStorage() Control Page - clicking Alert Storage
          //expect(QUnitChainer.myAlert.callCount).toEqual(2);
 
          expect(window.alert.callCount).toEqual(0);
-         QUnitChainer.logIt(Test.bLog, 'Leaving it');
+         //QUnitChainer.logIt(Test.bLog, 'Leaving it');
       });
    }
 });
@@ -1248,7 +1252,7 @@ xdescribe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChai
       Plan = { 'nextTestPlan': "next-test-plan.html", 'bPause':  true };
 
       window.QUnit = {};
-      QUnitChainer.myAlert = function (msg ) { message = msg; };
+      QUnitChainer.myAlert = function (msg) { message = msg; };
 
       QUnitChainer.cleanUserAgent = function (userAgent) { return userAgent; };
       QUnitChainer.cleanTestPlan = function (testPlan) { return testPlan; };

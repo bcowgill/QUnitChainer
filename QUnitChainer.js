@@ -46,7 +46,7 @@
     installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt,
     maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart, my, myAlert,
     name, nextTestPlan, passed, plan, protocol, pushArray, ready, removeClass,
-    removeItem, renderPage, replace, result, 'self.Tests',
+    removeItem, renderPage, replace, reset, result, 'self.Tests',
     setControlPageTestStatus, setItem, setLocation, setProperty,
     showControlPage, showTestSummary, skey, sskey, storage, storeProperties,
     storeTestResults, stringifyObj, testIdx, testStart, text, title, total,
@@ -58,7 +58,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '$Id$',
+   VERSION: '1.0 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -478,13 +478,12 @@ var QUnitChainer = {
       self.storeTestResults(rTestStorage);
       self.maybeAlertStorage('QUC - QUnit.done() - store test results');
 
-      // TODO to chain or not to chain.
+      // Chain to next test plan if flag is set and next test plan is defined
       if (self.getProperty('bFollowChain') && self.nextTestPlan) {
          self.logEvent({ 'in': 'QUC.done()', 'nextTestPlan': self.nextTestPlan });
          if (self.bPause) {
             self.myAlert("Tests finished, chaining to " + self.nextTestPlan + "\nfrom " + document.location);
          }
-         // TODO path relative to document location?
          self.maybeAlertStorage('QUC - QUnit.done() - chain');
          self.setLocation(self.nextTestPlan);
       } else if (self.getProperty('bFollowChain')) {
@@ -556,7 +555,7 @@ var QUnitChainer = {
     */
    injectControlPage: function (jqInjectAt) {
       jqInjectAt = jqInjectAt || 'body';
-      var html; // TODO, obj = 'QUnitChainer.';
+      var html;
       if (jQuery('#qunit-header').length === 0) {
          html = [
             '<h1 id="qunit-header">QUnitChainer Control Page</h1>',
@@ -718,7 +717,7 @@ var QUnitChainer = {
       // We call alert like this so JSLint won't report it as an error
       // That way unexpected debugging alert's will be caught by JSLint
       var alert = 'alert';
-      console.log('ALERT(' + msg + ')'); // TODO
+      //console.log('ALERT(' + msg + ')'); // TODO
       window[alert](msg);
    },
 
@@ -805,11 +804,15 @@ var QUnitChainer = {
       if (status === 'qunit-pass') {
          rBanner.removeClass('qunit-fail');
          rBanner.addClass(status);
-         document.title = '\u2714 ' + jQuery('#qunit-header').html();
+         document.title = jQuery('#qunit-header').html();
+         // Older OS (Win2000) won't show unicode check mark
+         //document.title = '\u2714 ' + jQuery('#qunit-header').html();
       } else {
          rBanner.removeClass('qunit-pass');
          rBanner.addClass(status);
-         document.title = '\u2716 ' + jQuery('#qunit-header').html();
+         document.title = 'FAIL - ' + jQuery('#qunit-header').html();
+         // Older OS (Win2000) won't show unicode cross mark
+         //document.title = '\u2716 ' + jQuery('#qunit-header').html();
       }
    },
 
@@ -1032,10 +1035,6 @@ var QUnitChainer = {
          // convert to JSON string for browsers with less capable console log (I.E. <=8 checked so far)
          if (this.browserIsIE()) {
             something = JSON.stringify(something);
-         }
-         // TODO remove this
-         if (something.match(/IS IT WEIRD/)) {
-//            return;
          }
          window.console.log(something);
       }

@@ -115,3 +115,5 @@ jQuery - http://jquery.com/
 QUnit - http://docs.jquery.com/QUnit
 Jasmine - https://github.com/pivotal/jasmine/wiki
 JSON2 - http://www.JSON.org/json2.js
+
+VERSION: 1.0 $Id$
