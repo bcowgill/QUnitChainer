@@ -50,7 +50,7 @@ if (!window.console) {
 var Test = {
    'bLog': false,
 
-   'VERSION': '1.0 $Id$',
+   'VERSION': '1.1 $Id$',
    'NUM_PROPERTIES': 6,
    'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage'],
    'Checkboxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
