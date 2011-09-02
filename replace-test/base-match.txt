@@ -1,0 +1,5 @@
+Processing replace-test.html
+      <link rel="stylesheet" href="../https/github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen">
+      <script type="text/javascript" src="../http/ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+      <script type="text/javascript" src="../https/github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+      <script type="text/javascript" src="../../../../main/webapp/media/js/ads-html5.js"></script>

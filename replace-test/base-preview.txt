@@ -1,0 +1,16 @@
+Processing replace-test.html
+      <link rel="stylesheet" href="../../QUnitChainer/qunit/qunit.css" type="text/css" media="screen">
+      <script type="text/javascript" src="../../QUnitChainer/jquery/jquery-1.6.2.min.js"></script>
+      <script type="text/javascript" src="../../QUnitChainer/qunit/qunit.js"></script>
+<!--[if lt IE 8 ]> <script language="javascript" src="../../QUnitChainer/json2/json2.js"></script> <![endif]-->
+    <script type="text/javascript" src="../../QUnitChainer/QUnitChainer.js"></script>
+    <script type="text/javascript">
+var Plan = {
+  // Specify the test plan to run after this one
+  nextTestPlan: '../../QUnitChainer/0-control.html',
+  '-': '-'
+};
+QUnitChainer.init();
+    </script>
+
+      <script type="text/javascript" src="../../h5ads/ads.js"></script>

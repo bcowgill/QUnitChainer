@@ -1,0 +1,18 @@
+../replace.pl: [-match] [-preview] [-replace] file ...
+
+This script will search and replace for the inclusion of qunit.css, qunit.js, 
+jquery.js and replace with new locations for these files as well as inject the 
+QUnitChainer includes needed for converting existing qunit test plans to use 
+QUnitChainer.
+
+To use it you will have edit it to customize the replacement values to match 
+your directory tree and test plan order.
+
+-replace  This options causes the listed files to be modified. It is the 
+          default option.
+-match    This option will not change the files listed.  It only searches 
+          them and shows you what lines would be matched and modified.
+-preview  This option will not change the files listed.  It searches and 
+          shows you what the changes would be.
+
+You must supply a file to modify.

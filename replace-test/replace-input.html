@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+      <title>Test TEMPLATE</title>
+      <link rel="stylesheet" href="../https/github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen">
+      <style type="text/css">
+         a img  { border:none ; }
+         div { border: 1px solid black; }
+      </style>
+
+      <script type="text/javascript">
+
+/*jslint evil: true, white: true, browser: true, onevar: false, undef: true, nomen: false, plusplus: false, eqeqeq: true, bitwise: true, regexp: true, newcap: true, immed: true, indent: 3 */
+/*globals $ test expect ok matches locateDiv pending equals navigator window */
+
+var TEST = {
+    // Description of the Behaviour Driven Development Test Case.
+    'story': "US14729",
+    'scenario': "1",
+    'description': "Offline mode generates no ad calls.",
+    'given': "an ad library configured for 'offline'",
+    'when':  "an ad call is made for any position",
+    'then':  "no call is made to doubleclick<br/><b>and</b> the ad position collapses on screen to occupy no space.",
+
+    // Data relating to this specific test
+    'libMode':     'small',
+    'libOffline': true,
+    'libSite':     'test.5887.dev',
+    'libZone':     'index',
+    'adPos':        'banlb',
+
+    '_': '_'
+};
+
+var FT = FT || {};
+
+      </script>
+
+      <script type="text/javascript" src="../http/ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+      <script type="text/javascript" src="../https/github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+      <script type="text/javascript" src="../../../../main/webapp/media/js/ads-html5.js"></script>
+
+      <script type="text/javascript">
+
+function given ()
+{
+   if (!TEST.bGiven)
+   {
+      // Prepare the state of the system as the Given clauses specify.
+      FT.env.setup(TEST.libMode, TEST.libOffline);
+      FT.env.dfp_site = TEST.libSite;
+   }
+   TEST.bGiven = true;
+}
+
+function when ()
+{
+   given();
+   if (!TEST.bWhen)
+   {
+      // Perform any actions indicated by the When clauses
+      TEST.getURL = FT.env.getURL(TEST.adPos);
+   }
+   TEST.bWhen = true;
+}
+
+function then ()
+{
+   when();
+   if (!TEST.bThen)
+   {
+      // Perform any actions indicated by the Then clauses
+   }
+   TEST.bThen = true;
+}
+
+test("given", function () {
+   expect(2);
+   given();
+   equals(FT.env.screenMode, 'small',                                                            "screenMode should be ");
+   ok(FT.env.offline,                                                                             "offline should be true");
+});
+
+test("when", function () {
+   when();
+   ok(true, "should be true");
+});
+
+test("then", function () {
+   expect(1);
+
+   then();
+   equals(TEST.getURL, undefined,                                                                "ad call should be ");
+});
+
+// Customize the Title and description of the Test case from the TEST data.
+jQuery(document).ready(function () {
+   var title = "Test " + TEST.story + ": Scenario " + TEST.scenario;
+   jQuery("head title").html(title + ": " + TEST.description);
+   jQuery("#qunit-header").html(title);
+   jQuery("#test-desc").html("The purpose of this page is to test <b>" + TEST.description + "</b>");
+   jQuery("#test-given").html("<b>Given</b> " + TEST.given);
+   jQuery("#test-when").html("<b>When</b> " + TEST.when);
+   jQuery("#test-then").html("<b>Then</b> " + TEST.then);
+});
+
+      </script>
+    </head>
+
+   <body>
+      <h1 id="qunit-header">Test BDD TEMPLATE</h1>
+      <h2 id="qunit-banner"></h2>
+      <h2 id="qunit-userAgent"></h2>
+
+      <p id="test-desc">The purpose of this page is to test BDD TEMPLATE</p>
+      <p id="test-given">Given TEMPLATE</p>
+      <p id="test-when">When TEMPLATE</p>
+      <p id="test-then">Then TEMPLATE</p>
+      <hr>
+      <ol id="qunit-tests">
+         <li></li>
+      </ol>
+
+      <div id="main"></div>
+
+      <hr>
+      <form>
+          <input type="button" name="showHistory" value="Show Ads History" onclick="javascript:FT.env.showHistory()">
+      </form>
+   </body>
+</html>
