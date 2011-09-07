@@ -31,26 +31,26 @@
 /*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jQuery, setInterval, window
 */
 /*properties
-    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
-    addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
-    bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
-    bIsIE, bLog, bLogEvent, bPause, bTrace, begin, bindUIEvents, browserIsFF,
-    browserIsIE, cancelAutoRun, change, checkStorage, checked, cleanTestPlan,
-    cleanUserAgent, clear, clearAllStorage, clearProperties, clearStorage,
-    clearTestResults, click, clickAlertStorage, clickAutoRun,
-    clickClearStorage, clickClearTests, clickDumpStorage, clickLog, clickPause,
-    clickRunTests, console, debugStorage, done, dumpStorage, failed,
-    getDefaultProperties, getItem, getProperties, getProperty, getTestResults,
-    handleAutoRun, header, host, href, html, in, init, initBrowser,
-    initControlPage, initTests, injectControlPage, installAutoRun,
-    installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt,
-    maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart, my, myAlert,
-    name, nextTestPlan, passed, plan, protocol, pushArray, ready, removeClass,
-    removeItem, renderPage, replace, reset, result, 'self.Tests',
-    setControlPageTestStatus, setItem, setLocation, setProperty,
-    showControlPage, showTestSummary, skey, sskey, storage, storeProperties,
-    storeTestResults, stringifyObj, testIdx, testStart, text, title, total,
-    trace, updateControlFields, userAgent, value, wipeQUnitOutput
+    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION, 
+    addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun, 
+    bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF, 
+    bIsIE, bLog, bLogEvent, bPause, bTrace, begin, bindUIEvents, browserIsFF, 
+    browserIsIE, cancelAutoRun, change, checkStorage, checked, cleanTestPlan, 
+    cleanUserAgent, clear, clearAllStorage, clearProperties, clearStorage, 
+    clearTestResults, click, clickAlertStorage, clickAutoRun, 
+    clickClearStorage, clickClearTests, clickDumpStorage, clickLog, clickPause, 
+    clickRunTests, console, debugStorage, done, dumpStorage, failed, 
+    getDefaultProperties, getItem, getProperties, getProperty, getStorage, 
+    getTestResults, handleAutoRun, header, host, href, html, in, init, 
+    initBrowser, initControlPage, initTests, injectControlPage, installAutoRun, 
+    installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt, 
+    maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart, my, myAlert, 
+    name, nextTestPlan, noModuleName, passed, plan, protocol, pushArray, ready, 
+    removeClass, removeItem, renderPage, replace, reset, result, 'self.Tests', 
+    setControlPageTestStatus, setItem, setLocation, setProperty, 
+    showControlPage, showTestSummary, skey, sskey, storage, storeProperties, 
+    storeTestResults, stringifyObj, testDone, testIdx, testStart, text, title, 
+    total, trace, updateControlFields, userAgent, value, wipeQUnitOutput
 */
 
 /*
@@ -58,7 +58,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.2 $Id$',
+   VERSION: '1.2 $Id: QUnitChainer.js 87629 2011-09-07 13:52:31Z bcowgill $',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -84,6 +84,7 @@ var QUnitChainer = {
 
    UICheckBoxes: ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
    QUnitHandlers: ['begin', 'done', 'moduleStart', 'moduleDone', 'testStart'],
+   noModuleName: 'Unknown Test Module, add a call to module() to this test plan',
 
    /*
     * QUnitChainer.init()
@@ -262,6 +263,22 @@ var QUnitChainer = {
 
       this.bHasHandlers = true;
    },
+   
+   /*
+    * QUnitChainer.getStorage()
+    * 
+    * Get a storage object if supported by the browser.
+    */
+   getStorage: function () {
+      var rStorage;
+      try {
+         // firefox on local file gives an error.
+         rStorage = window[this.storage];
+      } catch (exception) {
+         rStorage = undefined; /* is ok to do nothing */
+      }
+      return rStorage;
+   },
 
    /*
     * QUnitChainer.checkStorage()
@@ -271,11 +288,11 @@ var QUnitChainer = {
     * You might have to run your test plans from within a web server with a domain.
     */
    checkStorage: function () {
-      var get, bCheck = false;
-      if (window[this.storage]) {
-         window[this.storage].setItem("QUnitChainerCheckStorageWorks", "ExistenceExistsButDoesStorage?");
-         get = window[this.storage].getItem("QUnitChainerCheckStorageWorks");
-         window[this.storage].removeItem("QUnitChainerCheckStorageWorks");
+      var get, bCheck = false, rStorage = this.getStorage();
+      if (rStorage) {
+         rStorage.setItem("QUnitChainerCheckStorageWorks", "ExistenceExistsButDoesStorage?");
+         get = rStorage.getItem("QUnitChainerCheckStorageWorks");
+         rStorage.removeItem("QUnitChainerCheckStorageWorks");
          bCheck = (get === "ExistenceExistsButDoesStorage?") ? true : false;
       }
       this.trace('QUC.checkStorage() - ' + bCheck);
@@ -542,10 +559,40 @@ var QUnitChainer = {
       var self = QUnitChainer;
       self.logEvent({ 'in': "QUC - QUnit.testStart()", 'my': my});
 
+      if (!self.Tests.module) {
+         // Test plan has no call to module() inject one with a default module name
+         self.logEvent({ 'in': "QUC - QUnit.testStart()", 'message': "QUnit test plan has no call to module(Plan.title), adding a QUnit.testDone() handler" });
+         self.moduleStart({ 'name': self.noModuleName });
+         // And install a QUnit.testDone handler so we can track tests ourself
+         QUnit.testDone = QUnitChainer.testDone;
+      }
+      
       self.Tests.test = my.name;
       self.testIdx++;
    },
 
+   /*
+    * QUnit.testDone({ name, failed, passed, total }) handler
+    * 
+    * name is the string name of the test batch
+    * failed is the number of tests which failed
+    * passed is the number of tests which passed
+    * total is the number of tests run in this batch
+    */
+   testDone: function (result) {
+      var self = QUnitChainer;
+      self.logEvent({ 'in': "QUC - QUnit.testDone()", 'result': result});
+
+      // We only are concerned with testDone calls if module() has not been 
+      // called and we have assumed a module name.
+      if (self.Tests.module === self.noModuleName) {
+         // Add the pass/fail/total counts to the record for storage
+         self.Tests.failed += result.failed;
+         self.Tests.passed += result.passed;
+         self.Tests.total  += result.total;
+      }
+   },
+   
    /*
     * QUnitChainer.injectControlPage(jqInjectAt)
     *
