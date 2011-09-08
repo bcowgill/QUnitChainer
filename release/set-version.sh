@@ -12,5 +12,5 @@ fi
 echo Setting VERSION to $RELEASE_VERSION
 
 grep -l \$Id `find . -type f` | grep -v set-version\.sh > version.lst
-perl -i.bak -pne 's{(VERSION \x27? : \s* \x27?) \s* [0-9\.]*(\s+\$Id)}{${1}$ENV{"RELEASE_VERSION"}$2}xms' `cat version.lst`
+perl -i.bak -pne 's{(VERSION \x27? : \s* \x27?) \s* [0-9\.]*(\s+\$Id)[^\$]*\$}{${1}$ENV{"RELEASE_VERSION"}$2\$}xms' `cat version.lst`
 grep \$Id `cat version.lst`

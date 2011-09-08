@@ -53,15 +53,16 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 35,
-   'totalSpecs': 143,
+   'totalSuites': 34,
+   'totalSpecs': 136,
    'fewerSpecsIE': 6,
 
-   'VERSION': '1.0 $Id: QUnitChainerSpec.js 87613 2011-09-07 13:42:47Z bcowgill $',
+   'VERSION': '1.2 $Id$',
    'NUM_PROPERTIES': 6,
    'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage'],
    'Checkboxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
    'urlParamsTrue': 'url?bAutoRun&bAlertStorage&bFollowChain&bPause&bLog&bDumpStorage&bLogEvent&bTrace&bUnicodeTitle&autoRunInterval=60',
+
    'TestRunStorageFail': '{"mozilla":{"http://localhost:8888/qunit-chainer/q-test3.html":{"plan":"http://localhost:8888/qunit-chainer/q-test3.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - no tests","failed":0,"passed":0,"total":0,"log":{}}},"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan":"http://localhost:8888/qunit-chainer/q-test4.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - one passing test","failed":0,"passed":1,"total":1,"log":{}}}}',
    'TestRunStoragePass': '{"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan": "http://localhost:8888/qunit-chainer/q-test4.html","userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header": "QUnit example - no tests","failed": 0,"passed": 1,"total": 1,"log":{}}}}',
    'NoTestRunsMessage':  "\nNo test runs are stored in sessionStorage[QUCTest] use the run tests button to run some test plans.\n",
@@ -1592,11 +1593,22 @@ describe("END", function () {
    });
    it("should have correct number of it() blocks", function () {
       expect(jasmine.currentEnv_.nextSpecId_).toEqual(Test.totalSpecs);
+      // TODO when enabled we get errors in debugStorage test
+      //chainToNextTest();
    });
 });
 
+function chainToNextTest() {
+   // Invoke QUnitChainer in normal mode to use it to go to the next test plan
+   // TODO, any way to take the jasmine test results and store them as QUnitChainer results?
+   Plan = {
+      'nextTestPlan': '../sample/q-test.html'
+   };
+   QUnitChainer.init({ 'storage': "localStorage", 'skey': "QUnitChainer"});
+   if (QUnitChainer.getProperty('bFollowChain')) {
+      QUnitChainer.setLocation(Plan.nextTestPlan);
+   }
+}
 
 // TODO if log is turned on store calls to log() in storage and display on the control page in a textarea
-// TODO tool to inject nextTestPlan into javascripts
-// TODO tool to inject Plan {} into javascripts
 // TODO store order of tests in storage and edit from control page
