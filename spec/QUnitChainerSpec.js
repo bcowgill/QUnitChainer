@@ -21,27 +21,27 @@
   expect, getKeys, it, jasmine, jQuery, spyOn, window, xdescribe, waits, runs
 */
 /*properties
-    '-', Checkboxes, ExpectDebugStorage, ExpectDumpStorage, 
-    ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName, 
-    ExpectTestModuleName, ExpectTestName, ExpectTestPlanTitle, ExpectUserAgent, 
-    NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit, TestRunStorageFail, 
-    TestRunStoragePass, Tests, VERSION, actual, addMatchers, 'after change', 
-    alert, andCallThrough, andReturn, attr, autoRunInterval, bAlertStorage, 
-    bAutoRun, bControl, bDumpStorage, bFollowChain, bHasHandlers, 
-    bIsControlPage, bLog, bPause, begin, bindUIEvents, browserIsIE, callCount, 
-    cancelAutoRun, checkStorage, checked, cleanTestPlan, cleanUserAgent, 
-    clearProperties, clearTestResults, click, console, currentEnv_, 
-    debugStorage, done, failed, fewerSpecsIE, getDefaultProperties, 
-    getProperties, getProperty, getTestResults, handleAutoRun, header, host, 
-    href, html, init, initControlPage, initTests, injectControlPage, innerHTML, 
-    installQUnitHandlers, jqInjectAt, location, log, logIt, maybeAlertStorage, 
-    module, moduleDone, moduleIdx, moduleStart, myAlert, name, nextSpecId_, 
-    nextSuiteId_, nextTestPlan, not, passed, plan, protocol, renderPage, 
-    replace, reset, runtime, setLocation, setProperty, showControlPage, skey, 
-    storage, storeProperties, storeTestResults, stringifyObj, testDone, 
-    testIdx, testPlan, testStart, tests, text, this, title, toBeDefined, 
-    toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled, 
-    toHaveBeenCalledWith, toMatch, total, totalSpecs, totalSuites, userAgent, 
+    '-', Checkboxes, ExpectDebugStorage, ExpectDumpStorage,
+    ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName,
+    ExpectTestModuleName, ExpectTestName, ExpectTestPlanTitle, ExpectUserAgent,
+    NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit, TestRunStorageFail,
+    TestRunStoragePass, Tests, VERSION, actual, addMatchers, 'after change',
+    alert, andCallThrough, andReturn, attr, autoRunInterval, bAlertStorage,
+    bAutoRun, bControl, bDumpStorage, bFollowChain, bHasHandlers,
+    bIsControlPage, bLog, bPause, begin, bindUIEvents, browserIsIE, callCount,
+    cancelAutoRun, checkStorage, checked, cleanTestPlan, cleanUserAgent,
+    clearProperties, clearTestResults, click, console, currentEnv_,
+    debugStorage, done, failed, fewerSpecsIE, getDefaultProperties,
+    getProperties, getProperty, getTestResults, handleAutoRun, header, host,
+    href, html, init, initControlPage, initTests, injectControlPage, innerHTML,
+    installQUnitHandlers, jqInjectAt, location, log, logIt, maybeAlertStorage,
+    module, moduleDone, moduleIdx, moduleStart, myAlert, name, nextSpecId_,
+    nextSuiteId_, nextTestPlan, not, passed, plan, protocol, renderPage,
+    replace, reset, runtime, setLocation, setProperty, showControlPage, skey,
+    storage, storeProperties, storeTestResults, stringifyObj, testDone,
+    testIdx, testPlan, testStart, tests, text, this, title, toBeDefined,
+    toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled,
+    toHaveBeenCalledWith, toMatch, total, totalSpecs, totalSuites, userAgent,
     value, wipeQUnitOutput
 */
 
@@ -53,14 +53,15 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 34,
-   'totalSpecs': 136,
-   'fewerSpecsIE': 6, 
+   'totalSuites': 35,
+   'totalSpecs': 143,
+   'fewerSpecsIE': 6,
 
    'VERSION': '1.0 $Id: QUnitChainerSpec.js 87613 2011-09-07 13:42:47Z bcowgill $',
    'NUM_PROPERTIES': 6,
    'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage'],
    'Checkboxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
+   'urlParamsTrue': 'url?bAutoRun&bAlertStorage&bFollowChain&bPause&bLog&bDumpStorage&bLogEvent&bTrace&bUnicodeTitle&autoRunInterval=60',
    'TestRunStorageFail': '{"mozilla":{"http://localhost:8888/qunit-chainer/q-test3.html":{"plan":"http://localhost:8888/qunit-chainer/q-test3.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - no tests","failed":0,"passed":0,"total":0,"log":{}}},"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan":"http://localhost:8888/qunit-chainer/q-test4.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - one passing test","failed":0,"passed":1,"total":1,"log":{}}}}',
    'TestRunStoragePass': '{"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan": "http://localhost:8888/qunit-chainer/q-test4.html","userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header": "QUnit example - no tests","failed": 0,"passed": 1,"total": 1,"log":{}}}}',
    'NoTestRunsMessage':  "\nNo test runs are stored in sessionStorage[QUCTest] use the run tests button to run some test plans.\n",
@@ -78,7 +79,7 @@ var Test = {
    '-': '-'
 };
 if (QUnitChainer.browserIsIE()) {
-   Test.totalSpecs -= Test.fewerSpecsIE;   
+   Test.totalSpecs -= Test.fewerSpecsIE;
 }
 
 var Plan = {};
@@ -190,6 +191,32 @@ describe("QUnitChainer.getDefaultProperties() - default Properties are all false
 
    for (idx = 0; idx < Test.Properties.length; ++idx) {
       testPropertiesFalse(Test.Properties[idx]);
+   }
+});
+
+// TODO implement url parameter setting?
+xdescribe("QUnitChainer.getURLProperties() - properties can be set from the URL", function () {
+   var idx, rProperties;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to get Properties from URL) called');
+      rProperties = QUnitChainer.getURLProperties("bPause");
+   });
+
+   it("should have only " + Test.NUM_PROPERTIES + " Properties values", function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 2 ' + QUnitChainer.bLog);
+      expect(getKeys(rProperties).length).toEqual(Test.NUM_PROPERTIES);
+   });
+
+   // Must put these tests inside a function to prevent a closure in the for loop below.
+   function testPropertiesTrue(key) {
+      it("should have " + key + " set to true", function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 3b ' + QUnitChainer.bLog);
+         expect(key + ' ' + rProperties[key]).toEqual(key + ' true');
+      });
+   }
+
+   for (idx = 0; idx < Test.Properties.length; ++idx) {
+      testPropertiesTrue(Test.Properties[idx]);
    }
 });
 
@@ -401,7 +428,7 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
 
 describe("QUnitChainer.showControlPage() Control Page - checkbox state defaults unchecked", function () {
    var idx, title;
-   
+
    beforeEach(function () {
       title = document.title;
       QUnitChainer.showControlPage('#test-dom-output');
@@ -427,7 +454,7 @@ describe("QUnitChainer.showControlPage() Control Page - checkbox state defaults 
 
 describe("QUnitChainer.updateControlFields() Control Page - checkbox state defaults true, text field updated", function () {
    var idx, title, rStorage;
-   
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set checkbox properties) called');
       title = document.title;
@@ -471,7 +498,7 @@ describe("QUnitChainer.updateControlFields() Control Page - checkbox state defau
 
 describe("QUnitChainer.debugStorage() - Provide debugging info about storage", function () {
    var idx;
-   
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set properties and test summary storage for storage debugging) called');
       for (idx = 0; idx < Test.Properties.length; ++idx) {
@@ -635,7 +662,7 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered an
 
 describe("QUnitChainer.clickPause() Control Page - clicking Pause checkbox clears Auto Run checkbox", function () {
    var title, rStorage;
-   
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set auto run checkbox for pause test) called');
       title = document.title;
@@ -672,7 +699,7 @@ describe("QUnitChainer.clickPause() Control Page - clicking Pause checkbox clear
 
 describe("QUnitChainer.clickAutoRun() Control Page - clicking Auto Run checkbox clears Pause checkbox", function () {
    var title, rStorage;
-   
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set pause checkbox for auto run test) called');
       title = document.title;
@@ -706,7 +733,7 @@ describe("QUnitChainer.clickAutoRun() Control Page - clicking Auto Run checkbox 
 
 describe("QUnitChainer.clickLog() Control Page - clicking Log checkbox changes value in storage", function () {
    var title, rStorage;
-   
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for log checkbox test) called');
       title = document.title;
@@ -901,7 +928,7 @@ describe("QUnitChainer.clickClearStorage() Control Page - clicking Clear Storage
 
 describe("QUnitChainer.clickClearTests() Control Page - clicking Clear Tests button clears tests", function () {
    var idx, title, rProperties, rTestSummary;
-   
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for clear tests button test) called');
       title = document.title;
