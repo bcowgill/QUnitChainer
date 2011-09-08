@@ -57,7 +57,7 @@ var Test = {
    'totalSpecs': 136,
    'fewerSpecsIE': 6,
 
-   'VERSION': '1.2 $Id$',
+   'VERSION': '1.2.1 $Id$',
    'NUM_PROPERTIES': 6,
    'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage'],
    'Checkboxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],

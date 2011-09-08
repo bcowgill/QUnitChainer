@@ -119,4 +119,4 @@ QUnit - http://docs.jquery.com/QUnit
 Jasmine - https://github.com/pivotal/jasmine/wiki
 JSON2 - http://www.JSON.org/json2.js
 
-VERSION: 1.2 $Id$
+VERSION: 1.2.1 $Id$
