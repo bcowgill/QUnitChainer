@@ -1,5 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
+   $Id$
+
+   QUnit + QUnitChainer Sample Test plan
+   https://github.com/bcowgill/QUnitChainer
    http://docs.jquery.com/Qunit
    http://www.swift-lizard.com/2009/11/24/test-driven-development-with-jquery-qunit/
    http://net.tutsplus.com/tutorials/javascript-ajax/how-to-test-your-javascript-code-with-qunit/
@@ -11,13 +15,24 @@
 -->
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Tests with QUnitChainer TEMPLATE</title>
     <link rel="stylesheet" href="../qunit/qunit.css" type="text/css"/>
-    <script type="text/javascript" src="../qunit/qunit.js"></script>
+    <script language="javascript" src="../qunit/qunit.js"></script>
 
     <script src="../jquery/jquery-1.6.2.min.js"> </script>
+    <script language="javascript" src="../QUnitChainer.js"></script>
 <!--[if lt IE 8 ]> <script language="javascript" src="../json2/json2.js"></script> <![endif]-->
-    <script type="text/javascript" src="../QUnitChainer.js"></script>
-    <script type="text/javascript">
+    <script language="javascript">
+/*jslint browser: true, sloppy: true, white: true, nomen: false, plusplus: false, maxerr: 1000, indent: 3 */    
+
+/*properties
+   '-', init, nextTestPlan
+*/
+
+/*global Plan, QUnitChainer 
+*/
+
 var Plan = {
   // Specify the test plan to run after this one
   nextTestPlan: 'q-test3.html',
@@ -30,10 +45,10 @@ QUnitChainer.init();
     </script>
 
     <!-- Object being tested is included here -->
-    <script type="text/javascript" src="test-this-object.js"></script>
+    <script language="javascript" src="test-this-object.js"></script>
 
     <!-- Unit test plan is in separate javascript -->
-    <script type="text/javascript" src="test-plan.js"></script>
+    <script language="javascript" src="test-plan.js"></script>
 
   </head>
   <body>

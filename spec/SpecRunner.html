@@ -33,12 +33,12 @@ var Plan = {};
   <script language="javascript" src="QUnitChainerSpec.js"></script>
 
 <script language="javascript">
-/*jslint browser: true, sloppy: true, white: false, maxerr: 500, indent: 3 */
+/*jslint browser: true, sloppy: true, white: true, nomen: false, on: true, plusplus: false, maxerr: 1000, indent: 3 */
 /*globals Plan, QUnitChainer, Test, alert, jasmine, window
 */
 /*properties
-   TrivialReporter, VERSION, addReporter, execute, getEnv, onload, specFilter,
-   updateInterval
+   TrivialReporter, VERSION, addReporter, clearAllStorage, execute, getEnv, 
+   onload, skey, specFilter, storage, updateInterval
 */
 (function () {
    var jasmineEnv = jasmine.getEnv(),

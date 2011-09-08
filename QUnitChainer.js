@@ -27,7 +27,7 @@
      '-': '-'
    };
  */
-/*jslint browser: true, sloppy: true, white: false, plusplus: true, maxerr: 1000, indent: 3 */
+/*jslint browser: true, sloppy: true, white: false, plusplus: true, regexp: true, maxerr: 1000, indent: 3 */
 /*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jQuery, setInterval, window
 */
 /*properties
@@ -44,13 +44,14 @@
     getTestResults, handleAutoRun, header, host, href, html, in, init, 
     initBrowser, initControlPage, initTests, injectControlPage, installAutoRun, 
     installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt, 
-    maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart, my, myAlert, 
-    name, nextTestPlan, noModuleName, passed, plan, protocol, pushArray, ready, 
-    removeClass, removeItem, renderPage, replace, reset, result, 'self.Tests', 
-    setControlPageTestStatus, setItem, setLocation, setProperty, 
-    showControlPage, showTestSummary, skey, sskey, storage, storeProperties, 
-    storeTestResults, stringifyObj, testDone, testIdx, testStart, text, title, 
-    total, trace, updateControlFields, userAgent, value, wipeQUnitOutput
+    maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart, my, 
+    myAlert, name, nextTestPlan, noModuleName, passed, plan, protocol, 
+    pushArray, ready, removeClass, removeItem, renderPage, replace, reset, 
+    result, 'self.Tests', setControlPageTestStatus, setItem, setLocation, 
+    setProperty, showControlPage, showTestSummary, skey, sskey, storage, 
+    storeProperties, storeTestResults, stringifyObj, testDone, testIdx, 
+    testStart, text, title, total, trace, updateControlFields, userAgent, 
+    value, wipeQUnitOutput
 */
 
 /*
@@ -58,7 +59,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.2 $Id: QUnitChainer.js 87629 2011-09-07 13:52:31Z bcowgill $',
+   VERSION: '1.2 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -820,6 +821,7 @@ var QUnitChainer = {
                      overallStatus = 'qunit-fail';
                      this.setControlPageTestStatus(overallStatus);
                   }
+                  // jsLint says this is insecure, but it isn't
                   planName = planURL.replace(/^.+\//, '');
                   planName = planName.replace(/\/\/+/g, '/');
 

@@ -5,11 +5,19 @@
 -->
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>QUnitChainer Control Page</title>
     <link rel="stylesheet" href="qunitchainer.css" type="text/css"/>
     <script src="jquery/jquery-1.6.2.min.js"> </script>
-    <script type="text/javascript" src="QUnitChainer.js"></script>
+    <script language="javascript" src="QUnitChainer.js"></script>
 <!--[if lt IE 8 ]> <script language="javascript" src="json2/json2.js"></script> <![endif]-->
-    <script type="text/javascript">
+    <script language="javascript">
+/*jslint browser: true, sloppy: true, white: true, nomen: false, on: false, plusplus: false, maxerr: 1000, indent: 3 */
+/*properties
+    bControl, checkStorage, init, nextTestPlan
+*/
+/*global Plan, QUnitChainer, alert */
+
 var Plan = {
   // Specify the first test plan to run.
   nextTestPlan: 'sample/q-test.html',
