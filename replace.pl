@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# VERSION: 1.2.1 $Id$
+# VERSION: 1.2.2 $Id$
 #
 # This script will search and replace for the inclusion of qunit.css, qunit.js, jquery-x.js
 # and replace with new locations for these files as well as inject the QUnitChainer includes

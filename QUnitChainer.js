@@ -59,7 +59,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.2.1 $Id$',
+   VERSION: '1.2.2 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -276,7 +276,7 @@ var QUnitChainer = {
          // firefox on local file gives an error.
          rStorage = window[this.storage];
       } catch (exception) {
-         rStorage = undefined; /* is ok to do nothing */
+         rStorage = null; /* is ok to do nothing */
       }
       return rStorage;
    },
@@ -378,7 +378,7 @@ var QUnitChainer = {
     * Retrieve storage data from the QUnitChainerSettings key value and return as an object.
     */
    getProperties: function () {
-      var rStorage;
+      var rStorage = null;
       this.trace('QUC.getProperties(from ' + this.sskey + ')');
 
       // Get settings from storage QUnitChainerSettings key
@@ -425,7 +425,7 @@ var QUnitChainer = {
     */
    getTestResults: function () {
       // Get test results from storage QUnitChainer/user agent/test plan name
-      var rStorage;
+      var rStorage = null;
       if (window[this.storage]) {
          rStorage = JSON.parse(window[this.storage].getItem(this.skey));
       }
@@ -803,7 +803,7 @@ var QUnitChainer = {
     * Also update the pass/fail class status of the H2 with ID qunit-banner
     */
    showTestSummary: function () {
-      var userAgent, planURL, rTestPlan, moduleStatus, planName, Content = [], ModuleContent,
+      var userAgent = '', planURL = '', rTestPlan, moduleStatus, planName, Content = [], ModuleContent,
          userAgentStatus, overallStatus = 'qunit-pass',
          rStorage = this.getTestResults();
       this.maybeAlertStorage('QUC.showTestSummary()');
