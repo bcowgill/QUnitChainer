@@ -1,6 +1,10 @@
 /**
  * sinon-qunit 1.0.0, 2010/12/09
  *
+ * Note from Brent Cowgill
+ * Spy only version of sinon-qunit has useFakeTimers: false so that setTimeout
+ * is not overridden so that asynchronous qunit tests can be used.
+ *
  * @author Christian Johansen (christian@cjohansen.no)
  * http://sinonjs.org/
  *
@@ -45,7 +49,7 @@ sinon.config = {
     injectIntoThis: true,
     injectInto: null,
     properties: ["spy", "stub", "mock", "clock", "sandbox"],
-    useFakeTimers: true,
+    useFakeTimers: false,
     useFakeServer: false
 };
 

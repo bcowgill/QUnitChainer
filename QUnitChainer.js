@@ -31,26 +31,26 @@
 /*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jQuery, setInterval, window
 */
 /*properties
-    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION, 
-    addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun, 
-    bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF, 
-    bIsIE, bLog, bLogEvent, bPause, bTrace, begin, bindUIEvents, browserIsFF, 
-    browserIsIE, cancelAutoRun, change, checkStorage, checked, cleanTestPlan, 
-    cleanUserAgent, clear, clearAllStorage, clearProperties, clearStorage, 
-    clearTestResults, click, clickAlertStorage, clickAutoRun, 
-    clickClearStorage, clickClearTests, clickDumpStorage, clickLog, clickPause, 
-    clickRunTests, console, debugStorage, done, dumpStorage, failed, 
-    getDefaultProperties, getItem, getProperties, getProperty, getStorage, 
-    getTestResults, handleAutoRun, header, host, href, html, in, init, 
-    initBrowser, initControlPage, initTests, injectControlPage, installAutoRun, 
-    installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt, 
-    maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart, my, 
-    myAlert, name, nextTestPlan, noModuleName, passed, plan, protocol, 
-    pushArray, ready, removeClass, removeItem, renderPage, replace, reset, 
-    result, 'self.Tests', setControlPageTestStatus, setItem, setLocation, 
-    setProperty, showControlPage, showTestSummary, skey, sskey, storage, 
-    storeProperties, storeTestResults, stringifyObj, testDone, testIdx, 
-    testStart, text, title, total, trace, updateControlFields, userAgent, 
+    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
+    addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
+    bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
+    bIsIE, bLog, bLogEvent, bPause, bTrace, begin, bindUIEvents, browserIsFF,
+    browserIsIE, cancelAutoRun, change, checkStorage, checked, cleanTestPlan,
+    cleanUserAgent, clear, clearAllStorage, clearProperties, clearStorage,
+    clearTestResults, click, clickAlertStorage, clickAutoRun,
+    clickClearStorage, clickClearTests, clickDumpStorage, clickLog, clickPause,
+    clickRunTests, console, debugStorage, done, dumpStorage, failed,
+    getDefaultProperties, getItem, getProperties, getProperty, getStorage,
+    getTestResults, handleAutoRun, header, host, href, html, in, init,
+    initBrowser, initControlPage, initTests, injectControlPage, installAutoRun,
+    installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt,
+    maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart, my,
+    myAlert, name, nextTestPlan, noModuleName, passed, plan, protocol,
+    pushArray, ready, removeClass, removeItem, renderPage, replace, reset,
+    result, 'self.Tests', setControlPageTestStatus, setItem, setLocation,
+    setProperty, showControlPage, showTestSummary, skey, sskey, storage,
+    storeProperties, storeTestResults, stringifyObj, testDone, testIdx,
+    testStart, text, title, total, trace, updateControlFields, userAgent,
     value, wipeQUnitOutput
 */
 
@@ -59,7 +59,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.2.2 $Id$',
+   VERSION: '1.3 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -264,10 +264,10 @@ var QUnitChainer = {
 
       this.bHasHandlers = true;
    },
-   
+
    /*
     * QUnitChainer.getStorage()
-    * 
+    *
     * Get a storage object if supported by the browser.
     */
    getStorage: function () {
@@ -327,10 +327,11 @@ var QUnitChainer = {
     * Clear the properties in storage under the QUnitChainerSettings key value
     */
    clearProperties: function () {
+      var rStorage = this.getStorage();
       // Delete storage QUnitChainerSettings item
       this.trace('QUC.clearProperties(in ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties));
-      if (window[this.storage]) {
-         window[this.storage].removeItem(this.sskey);
+      if (rStorage) {
+         rStorage.removeItem(this.sskey);
       }
       this.Properties = this.getDefaultProperties();
    },
@@ -351,10 +352,11 @@ var QUnitChainer = {
     * Delete all items from storage, not just those added by QUnitChainer
     */
    clearAllStorage: function () {
+      var rStorage = this.getStorage();
       this.maybeAlertStorage('QUC.clearAllStorage()');
       this.clearProperties();
-      if (window[this.storage]) {
-         window[this.storage].clear();
+      if (rStorage) {
+         rStorage.clear();
       }
    },
 
@@ -364,11 +366,11 @@ var QUnitChainer = {
     * Store the QUnitChainer.Properties data in storage under the QUnitChainerSettings key value.
     */
    storeProperties: function () {
-      var store;
+      var store, rStorage = this.getStorage();
       this.trace('QUC.storeProperties(to ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties));
-      if (window[this.storage]) {
+      if (rStorage) {
          store = JSON.stringify(this.Properties);
-         window[this.storage].setItem(this.sskey, store);
+         rStorage.setItem(this.sskey, store);
       }
    },
 
@@ -378,19 +380,19 @@ var QUnitChainer = {
     * Retrieve storage data from the QUnitChainerSettings key value and return as an object.
     */
    getProperties: function () {
-      var rStorage = null;
+      var rProperties = null, rStorage = this.getStorage();
       this.trace('QUC.getProperties(from ' + this.sskey + ')');
 
       // Get settings from storage QUnitChainerSettings key
-      if (window[this.storage]) {
-         rStorage = JSON.parse(window[this.storage].getItem(this.sskey));
-         this.trace('fetched QUC.getProperties(from ' + this.sskey + ') - rStorage ' + JSON.stringify(rStorage));
+      if (rStorage) {
+         rProperties = JSON.parse(rStorage.getItem(this.sskey));
+         this.trace('fetched QUC.getProperties(from ' + this.sskey + ') - rProperties ' + JSON.stringify(rProperties));
       }
-      if (!rStorage) {
-         rStorage = this.getDefaultProperties();
+      if (!rProperties) {
+         rProperties = this.getDefaultProperties();
       }
-      this.trace('leaving QUC.getProperties(from ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties) + ' rStorage ' + JSON.stringify(rStorage));
-      return rStorage;
+      this.trace('leaving QUC.getProperties(from ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties) + ' rProperties ' + JSON.stringify(rProperties));
+      return rProperties;
    },
 
    /*
@@ -399,9 +401,10 @@ var QUnitChainer = {
     * Clear the test results under the QUnitChainer key from storage
     */
    clearTestResults: function () {
+      var rStorage = this.getStorage();
       // Delete storage QUnitChainer item with all test results
-      if (window[this.storage]) {
-         window[this.storage].removeItem(this.skey);
+      if (rStorage) {
+         rStorage.removeItem(this.skey);
       }
    },
 
@@ -410,11 +413,12 @@ var QUnitChainer = {
     *
     * Save an object (Test Run Results) to storage under the QUnitChainer key value
     */
-   storeTestResults: function (rStorage) {
+   storeTestResults: function (rTestResults) {
+      var store, rStorage = this.getStorage();
       // Store test results in storage QUnitChainer/user agent/test plan name
-      if (window[this.storage]) {
-         var store = JSON.stringify(rStorage);
-         window[this.storage].setItem(this.skey, store);
+      if (rStorage) {
+         store = JSON.stringify(rTestResults);
+         rStorage.setItem(this.skey, store);
       }
    },
 
@@ -425,14 +429,14 @@ var QUnitChainer = {
     */
    getTestResults: function () {
       // Get test results from storage QUnitChainer/user agent/test plan name
-      var rStorage = null;
-      if (window[this.storage]) {
-         rStorage = JSON.parse(window[this.storage].getItem(this.skey));
+      var rTestResults = null, rStorage = this.getStorage();
+      if (rStorage) {
+         rTestResults = JSON.parse(rStorage.getItem(this.skey));
       }
-      if (!rStorage) {
-         rStorage = {};
+      if (!rTestResults) {
+         rTestResults = {};
       }
-      return rStorage;
+      return rTestResults;
    },
 
    /*
@@ -567,14 +571,14 @@ var QUnitChainer = {
          // And install a QUnit.testDone handler so we can track tests ourself
          QUnit.testDone = QUnitChainer.testDone;
       }
-      
+
       self.Tests.test = my.name;
       self.testIdx++;
    },
 
    /*
     * QUnit.testDone({ name, failed, passed, total }) handler
-    * 
+    *
     * name is the string name of the test batch
     * failed is the number of tests which failed
     * passed is the number of tests which passed
@@ -584,7 +588,7 @@ var QUnitChainer = {
       var self = QUnitChainer;
       self.logEvent({ 'in': "QUC - QUnit.testDone()", 'result': result});
 
-      // We only are concerned with testDone calls if module() has not been 
+      // We only are concerned with testDone calls if module() has not been
       // called and we have assumed a module name.
       if (self.Tests.module === self.noModuleName) {
          // Add the pass/fail/total counts to the record for storage
@@ -593,7 +597,7 @@ var QUnitChainer = {
          self.Tests.total  += result.total;
       }
    },
-   
+
    /*
     * QUnitChainer.injectControlPage(jqInjectAt)
     *
@@ -722,14 +726,15 @@ var QUnitChainer = {
     */
    debugStorage: function (msg, maxlength) {
       maxlength = maxlength || 128;
-      var idx, key, value, Msg = [ msg, window.location.protocol + '//' + window.location.host ];
-      if (window[this.storage]) {
+      var idx, key, value, Msg = [ msg, window.location.protocol + '//' + window.location.host ],
+         rStorage = this.getStorage();
+      if (rStorage) {
          Msg.push(this.storage);
 
-         Msg.push('length: ' + window[this.storage].length);
-         for (idx = 0; idx < window[this.storage].length; idx++) {
-            key = window[this.storage].key(idx);
-            value = window[this.storage].getItem(key);
+         Msg.push('length: ' + rStorage.length);
+         for (idx = 0; idx < rStorage.length; idx++) {
+            key = rStorage.key(idx);
+            value = rStorage.getItem(key);
             if (value.length > maxlength) {
                value = "\n      " + value.substr(0, maxlength) + '...';
             }
