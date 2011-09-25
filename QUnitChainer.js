@@ -31,27 +31,28 @@
 /*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jQuery, setInterval, window
 */
 /*properties
-    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
-    addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
-    bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
-    bIsIE, bLog, bLogEvent, bPause, bTrace, begin, bindUIEvents, browserIsFF,
-    browserIsIE, cancelAutoRun, change, checkStorage, checked, cleanTestPlan,
-    cleanUserAgent, clear, clearAllStorage, clearProperties, clearStorage,
-    clearTestResults, click, clickAlertStorage, clickAutoRun,
-    clickClearStorage, clickClearTests, clickDumpStorage, clickLog, clickPause,
-    clickRunTests, console, debugStorage, done, dumpStorage, failed,
-    getDefaultProperties, getItem, getProperties, getProperty, getStorage,
-    getTestResults, handleAutoRun, header, host, href, html, in, init,
-    initBrowser, initControlPage, initTests, injectControlPage, installAutoRun,
-    installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt,
-    maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart, my,
-    myAlert, name, nextTestPlan, noModuleName, passed, plan, protocol,
-    pushArray, ready, removeClass, removeItem, renderPage, replace, reset,
-    result, 'self.Tests', setControlPageTestStatus, setItem, setLocation,
-    setProperty, showControlPage, showTestSummary, skey, sskey, storage,
-    storeProperties, storeTestResults, stringifyObj, testDone, testIdx,
-    testStart, text, title, total, trace, updateControlFields, userAgent,
-    value, wipeQUnitOutput
+   '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
+   addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
+   bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
+   bIsIE, bLog, bLogEvent, bPause, bShowFailTitle, bShowPassed, bTrace, begin,
+   bindUIEvents, browserIsFF, browserIsIE, cancelAutoRun, change,
+   checkStorage, checked, cleanTestPlan, cleanUserAgent, clear,
+   clearAllStorage, clearProperties, clearStorage, clearTestResults, click,
+   clickAlertStorage, clickAutoRun, clickClearStorage, clickClearTests,
+   clickDumpStorage, clickLog, clickPause, clickRunTests, clickShowFailTitle,
+   clickShowPassed, console, debugStorage, done, dumpStorage, failed,
+   getDefaultProperties, getItem, getProperties, getProperty, getStorage,
+   getTestResults, handleAutoRun, header, host, href, html, in, init,
+   initBrowser, initControlPage, initTests, injectControlPage, installAutoRun,
+   installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt,
+   maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart, my,
+   myAlert, name, nextTestPlan, noModuleName, passed, plan, protocol,
+   pushArray, ready, removeClass, removeItem, renderPage, replace, reset,
+   result, 'self.Tests', setControlPageTestStatus, setItem, setLocation,
+   setProperty, showControlPage, showHidePassedTests, showTestSummary, skey, sskey, storage,
+   storeProperties, storeTestResults, stringifyObj, testDone, testFailures,
+   testIdx, testPasses, testStart, testStatus, text, title, total, trace,
+   updateControlFields, userAgent, value, wipeQUnitOutput
 */
 
 /*
@@ -59,7 +60,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.3 $Id$',
+   VERSION: '1.4 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -69,7 +70,7 @@ var QUnitChainer = {
    bAlertStorage:   false,   // flag set if alert boxes with browser storage should be displayed when storage is manipulated
    bPause:          false,   // flag set to pause before chaining to next test plan (storage and Plan.bPause are checked)
    bLog:            false,   // flag set if the global log() function should output to the console
-   bLogEvent:       false,   // flag set to log QUnit and Control page events
+   bLogEvent:       true,   // flag set to log QUnit and Control page events
    bTrace:          false,   // flag set to trace internal method calls
    bIsIE:           undefined, // flag set if browser is Internet Explorer
    bIsFF:           undefined,   // flag set if browser is Firefox
@@ -78,12 +79,15 @@ var QUnitChainer = {
    autoRunInterval: 15000,   // auto run the test plans every 15 seconds
    moduleIdx:       -1,      // Index value for module being tested
    testIdx:         -1,      // Index value for test being tested
+   testStatus:      'qunit-fail', // Overall testing status
+   testPasses:      0,       // Overall test plans which passed
+   testFailures:    0,       // Overall test plans which failed
    nextTestPlan:    undefined, // next test plan to invoke
 
    Properties: {},           // properties saved to storage under skey
    Tests: {},                // test plan results saved to storage under sskey
 
-   UICheckBoxes: ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
+   UICheckBoxes: ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
    QUnitHandlers: ['begin', 'done', 'moduleStart', 'moduleDone', 'testStart'],
    noModuleName: 'Unknown Test Module, add a call to module() to this test plan',
 
@@ -197,12 +201,14 @@ var QUnitChainer = {
    getDefaultProperties: function () {
       this.trace('QUC.getDefaultProperties() - this.Properties ' + JSON.stringify(this.Properties));
       var rProperties = {
-         bFollowChain:  false,  // flag set to follow the chain to the next test plan in the sequence
-         bAutoRun:      false,  // flag set to cause the control page to automatically run the tests every 15 seconds
-         bPause:        false,  // flag set to pause with an alert message after test plan execution
-         bLog:          false,  // flag set to log results to the console log
-         bDumpStorage:  false,  // flag set to dump the QUnitChainer storage on the control page output
-         bAlertStorage: false,  // flag set to alert with browser storage values for debugging
+         bFollowChain:   false,  // flag set to follow the chain to the next test plan in the sequence
+         bAutoRun:       false,  // flag set to cause the control page to automatically run the tests every 15 seconds
+         bPause:         false,  // flag set to pause with an alert message after test plan execution
+         bLog:           false,  // flag set to log results to the console log
+         bDumpStorage:   false,  // flag set to dump the QUnitChainer storage on the control page output
+         bAlertStorage:  false,  // flag set to alert with browser storage values for debugging
+         bShowPassed:    false,  // flag set to show the test plans which have passed. Usually hidden.
+         bShowFailTitle: false,  // flag set to show FAIL in the title instead of unicode check/cross marks
          '-': '-'
       };
       delete (rProperties['-']);
@@ -607,28 +613,37 @@ var QUnitChainer = {
     */
    injectControlPage: function (jqInjectAt) {
       jqInjectAt = jqInjectAt || 'body';
-      var html;
+      var html, title = 'QUnitChainer Control Page';
+      if (!!Plan && Plan.title) {
+         title = Plan.title;
+      }
       if (jQuery('#qunit-header').length === 0) {
          html = [
-            '<h1 id="qunit-header">QUnitChainer Control Page</h1>',
+            '<h1 id="qunit-header">' + title + '</h1>',
             '<h2 id="qunit-banner"></h2>',
             '<div id="qunit-testrunner-toolbar">',
             '<input type="text" id="testPlan" name="testPlan" size="40">',
             '<input type="button" id="runTests" name="runTests" value="run tests">',
-            '<input type="checkbox" id="bPause" name="bPause">',
-            '<label for="bPause">pause</label>',
-            '<input type="checkbox" id="bLog" name="bLog">',
-            '<label for="bLog">logging</label>',
             '<input type="checkbox" id="bAutoRun" name="bAutoRun">',
             '<label for="bAutoRun">auto run</label>',
+            '<input type="checkbox" id="bLog" name="bLog">',
+            '<label for="bLog">logging</label>',
+            '<input type="checkbox" id="bPause" name="bPause">',
+            '<label for="bPause">pause</label>',
             '<input type="button" id="clearTests" name="clearTests" value="clear tests">',
             '<input type="checkbox" id="bDumpStorage" name="bDumpStorage">',
             '<label for="bDumpStorage">dump</label>',
             '<input type="checkbox" id="bAlertStorage" name="bAlertStorage">',
             '<label for="bAlertStorage">alert</label>',
             '<input type="button" id="clearStorage" name="clearStorage" value="clear storage">',
+            'show',
+            '<input type="checkbox" id="bShowPassed" name="bShowPassed">',
+            '<label for="bShowPassed">passed</label>',
+            '<input type="checkbox" id="bShowFailTitle" name="bShowFailTitle">',
+            '<label for="bShowFailTitle">FAIL in title</label>',
             '</div>',
             '<h2 id="qunit-userAgent"></h2>',
+            '<p id="qunit-testresult" class="result"></p>',
             '<ol id="qunit-tests">',
             '</ol>',
             '<div id="qunitchainer-dump"></div>',
@@ -808,7 +823,7 @@ var QUnitChainer = {
     * Also update the pass/fail class status of the H2 with ID qunit-banner
     */
    showTestSummary: function () {
-      var userAgent = '', planURL = '', rTestPlan, moduleStatus, planName, Content = [], ModuleContent,
+      var passed = 0, failed = 0, userAgent = '', planURL = '', rTestPlan, moduleStatus, planName, Content = [], ModuleContent,
          userAgentStatus, overallStatus = 'qunit-pass',
          rStorage = this.getTestResults();
       this.maybeAlertStorage('QUC.showTestSummary()');
@@ -822,9 +837,12 @@ var QUnitChainer = {
                   rTestPlan = rStorage[userAgent][planURL];
                   moduleStatus = (rTestPlan.failed || rTestPlan.total === 0) ? 'fail' : 'pass';
                   if (moduleStatus === 'fail') {
+                     ++failed;
                      userAgentStatus = 'fail';
                      overallStatus = 'qunit-fail';
                      this.setControlPageTestStatus(overallStatus);
+                  } else {
+                     ++passed;
                   }
                   // jsLint says this is insecure, but it isn't
                   planName = planURL.replace(/^.+\//, '');
@@ -839,35 +857,61 @@ var QUnitChainer = {
          }
       }
 
+      // Output a qunit-testresult div with passes and fails
+      this.testPasses = passed;
+      this.testFailures = failed;
+      jQuery('#qunit-testresult').html(failed + " failing test plan, " + passed + " passing test plan");
+
       if (Content.length === 0) {
          overallStatus = 'qunit-fail';
          Content.push('<li class="fail">\n<strong><span class="module-name">No test runs are stored in ' + this.storage + '[' +  this.skey + '] use the run tests button to run some test plans.</span></strong>\n</li>');
       }
       this.setControlPageTestStatus(overallStatus);
       jQuery('#qunit-tests').html(Content.join("\n"));
+      this.showHidePassedTests();
    },
 
    /*
-    * QUnitChainer.setControlPageFailed()
+    * QUnitChainer.setControlPageTestStatus()
+    *
+    * Set the hidepass class on the #qunit-tests element based on the bShowPassed property
+    */
+   showHidePassedTests: function () {
+      if (this.getProperty('bShowPassed')) {
+         jQuery('#qunit-tests').removeClass('hidepass');
+      } else {
+         jQuery('#qunit-tests').addClass('hidepass');
+      }
+   },
+
+   /*
+    * QUnitChainer.setControlPageTestStatus()
     *
     * Set the status banner and title to indicate the test plan has passed/failed
     * Use a unicode character for checkmark or cross to indicate pass/fail
     */
    setControlPageTestStatus: function (status) {
-      var rBanner = jQuery('#qunit-banner');
+      var prefix, number = 1, rBanner = jQuery('#qunit-banner'), title = jQuery('#qunit-header').html();
+      if (!!Plan && Plan.title) {
+         title = Plan.title;
+      }
+      // Use last status if undefined, and save status in object
+      status = status || this.testStatus;
+      this.testStatus = status;
       if (status === 'qunit-pass') {
+         number = this.testPasses;
          rBanner.removeClass('qunit-fail');
          rBanner.addClass(status);
-         document.title = jQuery('#qunit-header').html();
-         // Older OS (Win2000) won't show unicode check mark
-         //document.title = '\u2714 ' + jQuery('#qunit-header').html();
+         // Older OS (Win2000) won't show unicode check mark so we use PASS / FAIL
+         prefix = this.getProperty('bShowFailTitle') ? 'PASS' : '\u2714';
       } else {
+         number = this.testFailures;
          rBanner.removeClass('qunit-pass');
          rBanner.addClass(status);
-         document.title = 'FAIL - ' + jQuery('#qunit-header').html();
-         // Older OS (Win2000) won't show unicode cross mark
-         //document.title = '\u2716 ' + jQuery('#qunit-header').html();
+         prefix = this.getProperty('bShowFailTitle') ? 'FAIL' : '\u2716';
       }
+      document.title = prefix + ' ' + number + ' - ' + title;
+      jQuery('#qunit-header').html(title);
    },
 
    /*
@@ -882,6 +926,8 @@ var QUnitChainer = {
       jQuery('#bAutoRun').change(function () { rObj.clickAutoRun(); });
       jQuery('#bDumpStorage').change(function () { rObj.clickDumpStorage(); });
       jQuery('#bAlertStorage').change(function () { rObj.clickAlertStorage(); });
+      jQuery('#bShowPassed').change(function () { rObj.clickShowPassed(); });
+      jQuery('#bShowFailTitle').change(function () { rObj.clickShowFailTitle(); });
       jQuery('#runTests').click(function () { rObj.clickRunTests(); });
       jQuery('#clearTests').click(function () { rObj.clickClearTests(); });
       jQuery('#clearStorage').click(function () { rObj.clickClearStorage(); });
@@ -1009,6 +1055,34 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickRunTests()');
       this.setLocation(URL);
+   },
+
+   /*
+    * QUnitChainer.clickShowFailTitle(event)
+    * jQuery Event handler for when the Show Fail Title checkbox is clicked.
+    * Change the value in Storage and update the browser title bar
+    */
+   clickShowFailTitle: function (event) {
+      var checked = jQuery('#bShowFailTitle')[0].checked;
+      this.logEvent('QUC.clickShowFailTitle(' + JSON.stringify(event) + ') ' + checked);
+      this.setProperty('bShowFailTitle', checked);
+      this.storeProperties();
+      this.maybeAlertStorage('QUC.clickShowFailTitle()');
+      this.setControlPageTestStatus();
+   },
+
+   /*
+    * QUnitChainer.clickShowPassed(event)
+    * jQuery Event handler for when the Show Passed checkbox is clicked.
+    * Change the value in Storage and update the hidepass class on the #qunit-tests element
+    */
+   clickShowPassed: function (event) {
+      var checked = jQuery('#bShowPassed')[0].checked;
+      this.logEvent('QUC.clickShowPassed(' + JSON.stringify(event) + ') ' + checked);
+      this.setProperty('bShowPassed', checked);
+      this.storeProperties();
+      this.maybeAlertStorage('QUC.clickShowPassed()');
+      this.showHidePassedTests();
    },
 
    /*

@@ -17,32 +17,33 @@
  */
 
 /*jslint browser: true, sloppy: true, white: false, nomen: true, plusplus: true, maxerr: 1000, indent: 3 */
-/*globals QUnit, QUnitChainer, Test, afterEach, beforeEach, cmpHTML, describe, document,
-  expect, getKeys, it, jasmine, jQuery, spyOn, window, xdescribe, waits, runs
+/*globals QUnit, QUnitChainer, Test, afterEach, beforeEach, cmpHTML, describe, document, itShouldHaveCheckBox, testCheckBoxFalse, testCheckBoxTrue,
+  expect, getKeys, it, jasmine, jQuery, spyOn, window, waits, runs
 */
 /*properties
-    '-', Checkboxes, ExpectDebugStorage, ExpectDumpStorage, 
-    ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName, 
-    ExpectTestModuleName, ExpectTestName, ExpectTestPlanTitle, ExpectUserAgent, 
-    NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit, TestRunStorageFail, 
-    TestRunStoragePass, Tests, VERSION, actual, addMatchers, 'after change', 
-    alert, andCallThrough, andReturn, attr, autoRunInterval, bAlertStorage, 
-    bAutoRun, bControl, bDumpStorage, bFollowChain, bHasHandlers, 
-    bIsControlPage, bLog, bPause, begin, bindUIEvents, browserIsIE, callCount, 
-    cancelAutoRun, checkStorage, checked, cleanTestPlan, cleanUserAgent, 
-    clearProperties, clearTestResults, click, console, currentEnv_, 
-    debugStorage, done, failed, fewerSpecsIE, getDefaultProperties, 
-    getProperties, getProperty, getTestResults, getURLProperties, 
-    handleAutoRun, header, host, href, html, init, initControlPage, initTests, 
-    injectControlPage, innerHTML, installQUnitHandlers, jqInjectAt, location, 
-    log, logIt, maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart, 
-    myAlert, name, nextSpecId_, nextSuiteId_, nextTestPlan, not, passed, plan, 
-    protocol, renderPage, replace, reset, runtime, setLocation, setProperty, 
-    showControlPage, skey, storage, storeProperties, storeTestResults, 
-    stringifyObj, testDone, testIdx, testPlan, testStart, tests, text, this, 
-    title, toBeDefined, toBeEqualAsHtml, toBeUndefined, toEqual, 
-    toHaveBeenCalled, toHaveBeenCalledWith, toMatch, total, totalSpecs, 
-    totalSuites, urlParamsTrue, userAgent, value, wipeQUnitOutput
+    '-', CheckBoxLabel, CheckBoxes, ExpectDebugStorage, ExpectDumpStorage,
+    ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName,
+    ExpectTestModuleName, ExpectTestName, ExpectTestPlanTitle, ExpectUserAgent,
+    NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit, TestRunStorageFail,
+    TestRunStoragePass, Tests, VERSION, actual, addMatchers, 'after change',
+    alert, andCallThrough, andReturn, attr, autoRunInterval, bAlertStorage,
+    bAutoRun, bControl, bDumpStorage, bFollowChain, bHasHandlers,
+    bIsControlPage, bLog, bPause, bShowFailTitle, bShowPassed, begin, bindUIEvents,
+    browserIsIE, callCount, cancelAutoRun, checkStorage, checked,
+    cleanTestPlan, cleanUserAgent, clearProperties, clearTestResults, click,
+    console, currentEnv_, debugStorage, done, failed, fewerSpecsIE,
+    getDefaultProperties, getProperties, getProperty, getTestResults,
+    getURLProperties, handleAutoRun, header, host, href, html, init,
+    initControlPage, initTests, injectControlPage, innerHTML,
+    installQUnitHandlers, jqInjectAt, location, log, logIt, maybeAlertStorage,
+    module, moduleDone, moduleIdx, moduleStart, myAlert, name, nextSpecId_,
+    nextSuiteId_, nextTestPlan, not, passed, plan, protocol, renderPage, reset,
+    runtime, setLocation, setProperty, showControlPage, skey, skip, skipTODO,
+    storage, storeProperties, storeTestResults, stringifyObj, testDone,
+    testIdx, testPlan, testStart, tests, text, this, title, toBeDefined,
+    toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled,
+    toHaveBeenCalledWith, toMatch, total, totalSpecs, totalSuites,
+    urlParamsTrue, userAgent, value, wipeQUnitOutput
 */
 
 if (!window.console) {
@@ -53,21 +54,25 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 34,
-   'totalSpecs': 136,
+   'totalSuites': 38,
+   'totalSpecs': 170,
    'fewerSpecsIE': 6,
+   'skipTODO':     true,
+   'skip':         true,
 
-   'VERSION': '1.3 $Id$',
-   'NUM_PROPERTIES': 6,
-   'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage'],
-   'Checkboxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage'],
+   'VERSION': '1.4 $Id$',
+   'NUM_PROPERTIES': 8,
+   'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
+   'CheckBoxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
+   'CheckBoxLabel': ['auto run', 'alert', 'pause', 'logging', 'dump', 'passed', 'FAIL in title'],
+
    'urlParamsTrue': 'url?bAutoRun&bAlertStorage&bFollowChain&bPause&bLog&bDumpStorage&bLogEvent&bTrace&bUnicodeTitle&autoRunInterval=60',
 
    'TestRunStorageFail': '{"mozilla":{"http://localhost:8888/qunit-chainer/q-test3.html":{"plan":"http://localhost:8888/qunit-chainer/q-test3.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - no tests","failed":0,"passed":0,"total":0,"log":{}}},"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan":"http://localhost:8888/qunit-chainer/q-test4.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - one passing test","failed":0,"passed":1,"total":1,"log":{}}}}',
    'TestRunStoragePass': '{"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan": "http://localhost:8888/qunit-chainer/q-test4.html","userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header": "QUnit example - no tests","failed": 0,"passed": 1,"total": 1,"log":{}}}}',
    'NoTestRunsMessage':  "\nNo test runs are stored in sessionStorage[QUCTest] use the run tests button to run some test plans.\n",
 
-   'ExpectDumpStorage':    '<hr> \n<b>sessionStorage[QUCTestSettings]</b><pre><br>{<br>   "bFollowChain": false,<br>   "bAutoRun": true,<br>   "bPause": true,<br>   "bLog": true,<br>   "bDumpStorage": true,<br>   "bAlertStorage": true<br>}<br></pre><b>sessionStorage[QUCTest]</b><pre><br>{<br>   "mozilla": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test3.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test3.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - no tests",<br>   "failed": 0,<br>   "passed": 0,<br>   "total": 0,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br>,<br>   "after change": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test4.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test4.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - one passing test",<br>   "failed": 0,<br>   "passed": 1,<br>   "total": 1,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br><br>}<br></pre>',
+   'ExpectDumpStorage':    '<hr> \n<b>sessionStorage[QUCTestSettings]</b><pre><br>{<br>   "bFollowChain": false,<br>   "bAutoRun": true,<br>   "bPause": true,<br>   "bLog": true,<br>   "bDumpStorage": true,<br>   "bAlertStorage": true,<br> "bShowPassed": true,<br> "bShowFailTitle": true<br>}<br></pre><b>sessionStorage[QUCTest]</b><pre><br>{<br>   "mozilla": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test3.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test3.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - no tests",<br>   "failed": 0,<br>   "passed": 0,<br>   "total": 0,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br>,<br>   "after change": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test4.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test4.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - one passing test",<br>   "failed": 0,<br>   "passed": 1,<br>   "total": 1,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br><br>}<br></pre>',
    'ExpectDebugStorage':   'DEBUG\n' + window.location.protocol + '//' + window.location.host + '\nsessionStorage\nlength: 2\n 0: QUCTestSettings: \n {"bFollowChain":true,"bAutoRun...\n 1: QUCTest: \n {"after change":{"http://local...',
    'ExpectTestPlanTitle':  'QUnit Test Example',
    'ExpectUserAgent':      'userAgentMan',
@@ -85,56 +90,6 @@ if (QUnitChainer.browserIsIE()) {
 
 var Plan = {};
 
-function getKeys(rObj) {
-   var key = '', Keys = [];
-   for (key in rObj) {
-      if (rObj.hasOwnProperty(key)) {
-         Keys.push(key);
-      }
-   }
-   return Keys;
-}
-
-function cmpHTML(html) {
-   var bDebug = false, idx = 0, search, replace, Tags = ['hr', 'b', 'pre', 'br'];
-
-   // Compress spaces in output for easier comparisons, preserve newlines
-   html = html.replace(/\n+/g, '--[CR]--');
-   html = html.replace(/\s+/g, ' ');
-   html = html.replace(/--\[CR\]--/g, '\n');
-
-   // in IE only we sometimes have leading/trailing spaces on html() content so we strip them
-   html = html.replace(/^\s+/, '');
-   html = html.replace(/\s+$/, '');
-
-   // in IE only, HTML tags are uppercased!! so sanitize any HTML you are comparing
-   // this code only handle simple open/close tags in the Tags list provided
-   for (idx = 0; idx < Tags.length; ++idx) {
-      // opening tag
-      search = '<' + Tags[idx] + '>';
-      replace = search.toUpperCase();
-      search = new RegExp(search, 'g');
-      html = html.replace(search, replace);
-
-      // closing tag
-      search = '</' + Tags[idx] + '>';
-      replace = search.toUpperCase();
-      search = new RegExp(search, 'g');
-      html = html.replace(search, replace);
-   }
-
-   // Non IE browsers don't include the spaces and newline
-   if (!QUnitChainer.browserIsIE()) {
-      html = html.replace(/<HR> \n<B>/, '<HR><B>');
-   }
-
-   if (bDebug) {
-      // make spaces and newlines visible when debugging the comparison of output
-      html = html.replace(/\n/g, '[CR]');
-      html = html.replace(/\s/g, '[S]');
-   }
-   return html;
-}
 
 beforeEach(function () {
    QUnitChainer.logIt(Test.bLog, 'beforeEach(to init) called');
@@ -196,8 +151,13 @@ describe("QUnitChainer.getDefaultProperties() - default Properties are all false
 });
 
 // TODO implement url parameter setting?
-xdescribe("QUnitChainer.getURLProperties() - properties can be set from the URL", function () {
+describe("QUnitChainer.getURLProperties() - properties can be set from the URL", function () {
    var idx, rProperties = null;
+
+   if (Test.skip) {
+      return;
+   }
+
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to get Properties from URL) called');
       rProperties = QUnitChainer.getURLProperties("bPause");
@@ -343,7 +303,7 @@ describe("QUnitChainer.injectControlPage() Control Page - inject into document",
 });
 
 describe("QUnitChainer.showControlPage() Control Page - show control page", function () {
-   var title = 'nothing', NUM_INPUTS = 9;
+   var idx, title = 'nothing', NUM_INPUTS = 11;
    beforeEach(function () {
       title = document.title;
       QUnitChainer.showControlPage('#test-dom-output');
@@ -354,11 +314,8 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
       document.title = title;
    });
 
-   //TODO older OS (Win2000) won't show unicode cross mark. need a flag to control how we show pass/fail in title bar
-   //it('should have a document title of "\u2716 QUnitChainer Control Page"', function () {
-   it('should have a document title of "FAIL - QUnitChainer Control Page"', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 15 ' + QUnitChainer.bLog);
-      expect(jQuery('title').html()).toEqual("FAIL - QUnitChainer Control Page");
+   it('should have a document title of "\u2716 0 - QUnitChainer Control Page"', function () {
+      expect(jQuery('title').html()).toEqual("\u2716 0 - QUnitChainer Control Page");
    });
 
    it('should have a header of "QUnitChainer Control Page"', function () {
@@ -368,6 +325,7 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
    it('should have some form inputs', function () {
       expect(jQuery('#test-dom-output input').length).toEqual(NUM_INPUTS);
    });
+
 
    it('should have a text input field for the test plan to run', function () {
       expect(jQuery('input#testPlan[type="text"][name="testPlan"][id="testPlan"][size="40"]').length).toEqual(1);
@@ -385,46 +343,19 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
       expect(jQuery('input[type="button"][name="clearStorage"][id="clearStorage"][value="clear storage"]').length).toEqual(1);
    });
 
-   it('should have a pause checkbox on the page', function () {
-      expect(jQuery('input[type="checkbox"][name="bPause"][id="bPause"]').length).toEqual(1);
-   });
-   it('should have a label for the pause checkbox', function () {
-      expect(jQuery('label[for="bPause"]').length).toEqual(1);
-   });
-
-
-   it('should have a logging checkbox on the page', function () {
-      expect(jQuery('input[type="checkbox"][name="bLog"][id="bLog"]').length).toEqual(1);
-   });
-   it('should have a label for the logging checkbox', function () {
-      expect(jQuery('label[for="bLog"]').length).toEqual(1);
-   });
-
-   it('should have a auto run checkbox on the page', function () {
-      expect(jQuery('input[type="checkbox"][name="bAutoRun"][id="bAutoRun"]').length).toEqual(1);
-   });
-   it('should have a label for the auto run checkbox', function () {
-      expect(jQuery('label[for="bAutoRun"]').length).toEqual(1);
-   });
-
-   it('should have a dump storage checkbox on the page', function () {
-      expect(jQuery('input[type="checkbox"][name="bDumpStorage"][id="bDumpStorage"]').length).toEqual(1);
-   });
-   it('should have a label for the dump storage checkbox', function () {
-      expect(jQuery('label[for="bDumpStorage"]').length).toEqual(1);
-   });
-
-   it('should have a alert storage checkbox on the page', function () {
-      expect(jQuery('input[type="checkbox"][name="bAlertStorage"][id="bAlertStorage"]').length).toEqual(1);
-   });
-   it('should have a label for the alert storage checkbox', function () {
-      expect(jQuery('label[for="bAlertStorage"]').length).toEqual(1);
-   });
+   for (idx = 0; idx < Test.CheckBoxes.length; ++idx) {
+      itShouldHaveCheckBox(Test.CheckBoxLabel[idx], Test.CheckBoxes[idx]);
+   }
 
    it('should have a message showing no tests plans are in storage', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 16 ' + QUnitChainer.bLog);
       expect(jQuery('#qunit-tests').text()).toBeEqualAsHtml(Test.NoTestRunsMessage);
    });
+
+   it('should have a header of "QUnitChainer Control Page"', function () {
+      expect(jQuery('#qunit-header').text()).toEqual("QUnitChainer Control Page");
+   });
+
 });
 
 describe("QUnitChainer.showControlPage() Control Page - checkbox state defaults unchecked", function () {
@@ -440,16 +371,8 @@ describe("QUnitChainer.showControlPage() Control Page - checkbox state defaults 
       document.title = title;
    });
 
-   // Must put these tests inside a function to prevent a closure in the for loop below.
-   function testCheckboxFalse(key) {
-      it("should have checkbox " + key + " UNCHECKED", function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 17 ' + QUnitChainer.bLog);
-         expect(key + ' ' + jQuery('input[type="checkbox"][name="' + key + '"]')[0].checked).toEqual(key + ' false');
-      });
-   }
-
-   for (idx = 0; idx < Test.Checkboxes.length; ++idx) {
-      testCheckboxFalse(Test.Checkboxes[idx]);
+   for (idx = 0; idx < Test.CheckBoxes.length; ++idx) {
+      testCheckBoxFalse(Test.CheckBoxes[idx]);
    }
 });
 
@@ -480,15 +403,8 @@ describe("QUnitChainer.updateControlFields() Control Page - checkbox state defau
       expect('testPlan ' + jQuery('input[type="text"][name="testPlan"]')[0].value).toEqual('testPlan next-test-plan.html');
    });
 
-   // Must put these tests inside a function to prevent a closure in the for loop below.
-   function testCheckboxTrue(key) {
-      it("should have checkbox " + key + " CHECKED", function () {
-         expect(key + ' ' + jQuery('input[type="checkbox"][name="' + key + '"]')[0].checked).toEqual(key + ' true');
-      });
-   }
-
-   for (idx = 0; idx < Test.Checkboxes.length; ++idx) {
-      testCheckboxTrue(Test.Checkboxes[idx]);
+   for (idx = 0; idx < Test.CheckBoxes.length; ++idx) {
+      testCheckBoxTrue(Test.CheckBoxes[idx]);
    }
 
    it("should have bFollowChain cleared in storage", function () {
@@ -543,7 +459,7 @@ describe("QUnitChainer.showStorage() Control Page - Properties and Test Summary 
    });
 });
 
-describe("QUnitChainer.showTestSummary() Control Page - Banner class set for Success", function () {
+describe("QUnitChainer.showTestSummary() Control Page - Banner class set for Success and passing tests hidden", function () {
    var title = 'nothing';
 
    beforeEach(function () {
@@ -561,19 +477,27 @@ describe("QUnitChainer.showTestSummary() Control Page - Banner class set for Suc
       Plan = {};
    });
 
-   //TODO Older OS (Win2000) won't show unicode check mark. Need a flag to control ho we show pass/fail in title bar
-   //it('should have a document title of "\u2714 QUnitChainer Control Page"', function () {
-   it('should have a document title of "\u2714 QUnitChainer Control Page"', function () {
+   it('should have a document title of "\u2714 1 - QUnitChainer Control Page"', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 22 ' + QUnitChainer.bLog);
-      expect(jQuery('title').html()).toEqual("QUnitChainer Control Page");
+      expect(jQuery('title').html()).toEqual("\u2714 1 - QUnitChainer Control Page");
    });
+
+   it('should have a test result of "0 failing test plan, 1 passing test plan"', function () {
+      expect(jQuery('#qunit-testresult.result').html()).toEqual("0 failing test plan, 1 passing test plan");
+   });
+
    it("should have the success class added to the banner line", function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 23 ' + QUnitChainer.bLog);
       expect(jQuery('#qunit-banner').attr('class')).toEqual('qunit-pass');
    });
+
+   it("should have the hidepass class added to the #qunit-tests div", function () {
+      expect(jQuery('#qunit-tests').attr('class')).toEqual('hidepass');
+
+   });
 });
 
-describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered and banner class set for Failure", function () {
+describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered, passing tests not hidden and banner class set for Failure", function () {
    var idx, title = 'nothing';
 
    beforeEach(function () {
@@ -596,9 +520,24 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered an
       Plan = {};
    });
 
+   it('should have a document title of "FAIL 1 - QUnitChainer Control Page"', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 15 ' + QUnitChainer.bLog);
+      expect(jQuery('title').html()).toEqual("FAIL 1 - QUnitChainer Control Page");
+   });
+
+   it('should have a test result of "1 failing test plan, 1 passing test plan"', function () {
+      expect(jQuery('#qunit-testresult.result').html()).toEqual("1 failing test plan, 1 passing test plan");
+//      <p id="qunit-testresult" class="result">Tests completed in 53 milliseconds.<br><span class="passed">0</span> tests of <span class="total">0</span> passed, <span class="failed">0</span> failed.</p>
+   });
+
    it("should have the failure class added to the banner line", function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 24 ' + QUnitChainer.bLog);
       expect(jQuery('#qunit-banner').attr('class')).toEqual('qunit-fail');
+   });
+
+   it("should NOT have the hidepass class added to the #qunit-tests div", function () {
+      expect(jQuery('#qunit-tests.hidepass').length).toEqual(0);
+
    });
 
    it("should have two user agent entries (uses module-name)", function () {
@@ -661,6 +600,28 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered an
 
 });
 
+describe("QUnitChainer.setControlPageTestStatus() Control Page - if Plan.title exists, use it as title", function () {
+   var title = 'nothing', TITLE = 'CUSTOM TITLE FOR TEST PLAN';
+   beforeEach(function () {
+      title = document.title;
+      Plan = { 'title': TITLE };
+      QUnitChainer.showControlPage('#test-dom-output');
+   });
+
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title 1) called');
+      document.title = title;
+   });
+
+   it('should have a document title of "\u2716 0 - ' + TITLE + '"', function () {
+      expect(jQuery('title').html()).toEqual("\u2716 0 - " + TITLE);
+   });
+
+   it('should have a header of "' + TITLE + '"', function () {
+      expect(jQuery('#qunit-header').text()).toEqual(TITLE);
+   });
+});
+
 describe("QUnitChainer.clickPause() Control Page - clicking Pause checkbox clears Auto Run checkbox", function () {
    var title = 'nothing', rStorage = null;
 
@@ -720,7 +681,7 @@ describe("QUnitChainer.clickAutoRun() Control Page - clicking Auto Run checkbox 
       document.title = title;
    });
 
-   // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the auto run, pause checkboxes cleared and saved to storage', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 27 ' + QUnitChainer.bLog);
@@ -753,7 +714,7 @@ describe("QUnitChainer.clickLog() Control Page - clicking Log checkbox changes v
       document.title = title;
    });
 
-   // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the log checkbox checked and in storage', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 28 ' + QUnitChainer.bLog);
@@ -782,7 +743,7 @@ describe("QUnitChainer.clickDumpStorage() Control Page - clicking Dump Storage c
       document.title = title;
    });
 
-   // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the dump storage checkbox checked and in storage and visible on page', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 29 ' + QUnitChainer.bLog);
@@ -814,7 +775,7 @@ describe("QUnitChainer.clickDumpStorage() Control Page - clicking Dump Storage c
       document.title = title;
    });
 
-   // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the dump storage checkbox unchecked and in storage and visible on page', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 30 ' + QUnitChainer.bLog);
@@ -848,13 +809,12 @@ describe("QUnitChainer.clickAlertStorage() Control Page - clicking Alert Storage
    });
 
    afterEach(function () {
-      QUnitChainer.logIt(Test.bLog, 'After the Test');
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title 8) called');
       document.title = title;
    });
 
    QUnitChainer.logIt(Test.bLog, 'Do the tests');
-   // TODO THESE TESTS FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
    if (!QUnitChainer.browserIsIE()) {
       it('should have the alert storage checkbox checked and saved in storage', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 31 ' + QUnitChainer.bLog);
@@ -875,6 +835,67 @@ describe("QUnitChainer.clickAlertStorage() Control Page - clicking Alert Storage
 
          expect(window.alert.callCount).toEqual(0);
          //QUnitChainer.logIt(Test.bLog, 'Leaving it');
+      });
+   }
+});
+
+describe("QUnitChainer.clickShowFailTitle() Control Page - clicking Show Fail Title checkbox changes title from unicode to text", function () {
+   var title = 'nothing', rStorage = null;
+
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for Show Fail Title checkbox test) called');
+
+      title = document.title;
+      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      QUnitChainer.showControlPage('#test-dom-output');
+      QUnitChainer.bindUIEvents();
+      jQuery('#bShowFailTitle').click();
+      rStorage = QUnitChainer.getProperties();
+   });
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and Plan 6) called');
+      document.title = title;
+      Plan = {};
+   });
+
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   if (!QUnitChainer.browserIsIE()) {
+      it("should have bShowFailTitle property set and changed the title to text", function () {
+         expect(rStorage.bShowFailTitle).toEqual(true);
+         expect(jQuery('title').html()).toEqual("FAIL 0 - QUnitChainer Control Page");
+      });
+   }
+});
+
+describe("QUnitChainer.clickShowPassed() Control Page - clicking Show Passed checkbox unhides the passing test plans", function () {
+   var title = 'nothing', rStorage = null, classBefore = 'nothing';
+
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for bShowPassed checkbox click test');
+
+      title = document.title;
+      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
+      QUnitChainer.showControlPage('#test-dom-output');
+      classBefore = jQuery('#qunit-tests').attr('class');
+      QUnitChainer.bindUIEvents();
+      jQuery('#bShowPassed').click();
+      rStorage = QUnitChainer.getProperties();
+   });
+
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and Plan 7) called');
+      document.title = title;
+      Plan = {};
+   });
+
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   if (!QUnitChainer.browserIsIE()) {
+      it("should have bShowPassed property set and should have removed the hidepass class from the #qunit-tests div", function () {
+         expect(classBefore).toEqual('hidepass');
+         expect(rStorage.bShowPassed).toEqual(true);
+         expect(jQuery('#qunit-tests.hidepass').length).toEqual(0);
       });
    }
 });
