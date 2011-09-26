@@ -31,28 +31,29 @@
 /*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jQuery, setInterval, window
 */
 /*properties
-   '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
-   addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
-   bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
-   bIsIE, bLog, bLogEvent, bPause, bShowFailTitle, bShowPassed, bTrace, begin,
-   bindUIEvents, browserIsFF, browserIsIE, cancelAutoRun, change,
-   checkStorage, checked, cleanTestPlan, cleanUserAgent, clear,
-   clearAllStorage, clearProperties, clearStorage, clearTestResults, click,
-   clickAlertStorage, clickAutoRun, clickClearStorage, clickClearTests,
-   clickDumpStorage, clickLog, clickPause, clickRunTests, clickShowFailTitle,
-   clickShowPassed, console, debugStorage, done, dumpStorage, failed,
-   getDefaultProperties, getItem, getProperties, getProperty, getStorage,
-   getTestResults, handleAutoRun, header, host, href, html, in, init,
-   initBrowser, initControlPage, initTests, injectControlPage, installAutoRun,
-   installQUnitHandlers, jqInjectAt, key, location, log, logEvent, logIt,
-   maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart, my,
-   myAlert, name, nextTestPlan, noModuleName, passed, plan, protocol,
-   pushArray, ready, removeClass, removeItem, renderPage, replace, reset,
-   result, 'self.Tests', setControlPageTestStatus, setItem, setLocation,
-   setProperty, showControlPage, showHidePassedTests, showTestSummary, skey, sskey, storage,
-   storeProperties, storeTestResults, stringifyObj, testDone, testFailures,
-   testIdx, testPasses, testStart, testStatus, text, title, total, trace,
-   updateControlFields, userAgent, value, wipeQUnitOutput
+    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
+    addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
+    bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
+    bIsIE, bLog, bLogEvent, bPause, bShowFailTitle, bShowPassed, bTrace, begin,
+    bindUIEvents, browserIsFF, browserIsIE, cancelAutoRun, change,
+    checkStorage, checked, cleanTestPlan, cleanUserAgent, clear,
+    clearAllStorage, clearProperties, clearStorage, clearTestResults, click,
+    clickAlertStorage, clickAutoRun, clickClearStorage, clickClearTests,
+    clickDumpStorage, clickLog, clickPause, clickRunTests, clickShowFailTitle,
+    clickShowPassed, console, css, debugStorage, done, dumpStorage, failed,
+    fetchItem, getDefaultProperties, getItem, getProperties, getProperty,
+    getStorage, getTestResults, handleAutoRun, header, host, href, html, in,
+    init, initBrowser, initControlPage, initTests, injectControlPage,
+    installAutoRun, installQUnitHandlers, jqInjectAt, key, location, log,
+    logEvent, logIt, maybeAlertStorage, message, module, moduleDone, moduleIdx,
+    moduleStart, my, myAlert, name, nextTestPlan, noModuleName, passed, plan,
+    protocol, pushArray, ready, removeClass, removeItem, renderPage, replace,
+    reset, result, 'self.Tests', setControlPageTestStatus, setItem,
+    setLocation, setProperty, showControlPage, showFixture,
+    showHidePassedTests, showTestSummary, skey, sskey, storage, storeItem,
+    storeProperties, storeTestResults, stringifyObj, testDone, testFailures,
+    testIdx, testPasses, testStart, testStatus, text, title, total, trace,
+    updateControlFields, userAgent, value, wipeQUnitOutput
 */
 
 /*
@@ -60,7 +61,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.4 $Id$',
+   VERSION: '1.5 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -194,6 +195,16 @@ var QUnitChainer = {
    },
 
    /*
+    * QUnitChainer.showFixture()
+    *
+    * Show the qunit-fixture div so that you can see what is happening
+    * during tests which manipulate the DOM
+    */
+   showFixture: function () {
+      jQuery('#qunit-fixture').css('position', 'relative').css('top', 0).css('left', 0);
+   },
+
+   /*
     * QUnitChainer.getDefaultProperties()
     *
     * Retrieve the default values to use for the object Properties
@@ -282,7 +293,68 @@ var QUnitChainer = {
          // firefox on local file gives an error.
          rStorage = window[this.storage];
       } catch (exception) {
-         rStorage = null; /* is ok to do nothing */
+         rStorage = null;
+      }
+      return rStorage;
+   },
+
+   /*
+    * QUnitChainer.fetchItem(key, bJSON)
+    *
+    * Get an item from browser storage.
+    * key - the key name under which to look for the item
+    * bJSON - flag if true will treat the value as JSON and decode it to an object
+    */
+   fetchItem: function (key, bJSON) {
+      var value, rStorage = this.getStorage();
+      if (rStorage) {
+         try {
+            value = rStorage.getItem(key);
+            if (bJSON && typeof value === 'string') {
+               value = JSON.parse(value);
+            }
+         } catch (exception) {
+            value = undefined;
+         }
+      }
+      return value;
+   },
+
+   /*
+    * QUnitChainer.storeItem(key, value, bJSON)
+    *
+    * Save an item to browser storage
+    * key - the key name under which to store the item
+    * value - the value to store
+    * bJSON - flag if true will convert the value into a JSON string before storage
+    */
+   storeItem: function (key, value, bJSON) {
+      var rStorage = this.getStorage();
+      if (rStorage) {
+         try {
+            value = bJSON ? JSON.stringify(value) : value;
+            rStorage.setItem(key, value);
+         } catch (exception) {
+            rStorage = null;
+         }
+      }
+      return rStorage;
+   },
+
+   /*
+    * QUnitChainer.removeItem(key)
+    *
+    * Remove an item from browser storage
+    * key - the key name of the item to remove
+    */
+   removeItem: function (key) {
+      var rStorage = this.getStorage();
+      if (rStorage) {
+         try {
+            rStorage.removeItem(key);
+         } catch (exception) {
+            rStorage = null;
+         }
       }
       return rStorage;
    },
@@ -295,13 +367,14 @@ var QUnitChainer = {
     * You might have to run your test plans from within a web server with a domain.
     */
    checkStorage: function () {
-      var get, bCheck = false, rStorage = this.getStorage();
-      if (rStorage) {
-         rStorage.setItem("QUnitChainerCheckStorageWorks", "ExistenceExistsButDoesStorage?");
-         get = rStorage.getItem("QUnitChainerCheckStorageWorks");
-         rStorage.removeItem("QUnitChainerCheckStorageWorks");
-         bCheck = (get === "ExistenceExistsButDoesStorage?") ? true : false;
-      }
+      var get, bCheck = false,
+         key = "QUnitChainerCheckStorageWorks",
+         value = "ExistenceExistsButDoesStorage?";
+
+      this.storeItem(key, value);
+      get = this.fetchItem(key);
+      this.removeItem(key);
+      bCheck = (get === value) ? true : false;
       this.trace('QUC.checkStorage() - ' + bCheck);
       return bCheck;
    },
@@ -333,12 +406,8 @@ var QUnitChainer = {
     * Clear the properties in storage under the QUnitChainerSettings key value
     */
    clearProperties: function () {
-      var rStorage = this.getStorage();
-      // Delete storage QUnitChainerSettings item
       this.trace('QUC.clearProperties(in ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties));
-      if (rStorage) {
-         rStorage.removeItem(this.sskey);
-      }
+      this.removeItem(this.sskey);
       this.Properties = this.getDefaultProperties();
    },
 
@@ -360,7 +429,7 @@ var QUnitChainer = {
    clearAllStorage: function () {
       var rStorage = this.getStorage();
       this.maybeAlertStorage('QUC.clearAllStorage()');
-      this.clearProperties();
+      this.clearStorage();
       if (rStorage) {
          rStorage.clear();
       }
@@ -372,12 +441,8 @@ var QUnitChainer = {
     * Store the QUnitChainer.Properties data in storage under the QUnitChainerSettings key value.
     */
    storeProperties: function () {
-      var store, rStorage = this.getStorage();
       this.trace('QUC.storeProperties(to ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties));
-      if (rStorage) {
-         store = JSON.stringify(this.Properties);
-         rStorage.setItem(this.sskey, store);
-      }
+      this.storeItem(this.sskey, this.Properties, 'JSON');
    },
 
    /*
@@ -386,14 +451,12 @@ var QUnitChainer = {
     * Retrieve storage data from the QUnitChainerSettings key value and return as an object.
     */
    getProperties: function () {
-      var rProperties = null, rStorage = this.getStorage();
+      var rProperties = null;
       this.trace('QUC.getProperties(from ' + this.sskey + ')');
 
       // Get settings from storage QUnitChainerSettings key
-      if (rStorage) {
-         rProperties = JSON.parse(rStorage.getItem(this.sskey));
-         this.trace('fetched QUC.getProperties(from ' + this.sskey + ') - rProperties ' + JSON.stringify(rProperties));
-      }
+      rProperties = this.fetchItem(this.sskey, 'JSON');
+      this.trace('fetched QUC.getProperties(from ' + this.sskey + ') - rProperties ' + JSON.stringify(rProperties));
       if (!rProperties) {
          rProperties = this.getDefaultProperties();
       }
@@ -407,25 +470,16 @@ var QUnitChainer = {
     * Clear the test results under the QUnitChainer key from storage
     */
    clearTestResults: function () {
-      var rStorage = this.getStorage();
-      // Delete storage QUnitChainer item with all test results
-      if (rStorage) {
-         rStorage.removeItem(this.skey);
-      }
+      this.removeItem(this.skey);
    },
 
    /*
-    * QUnitChainer.storeTestResults(rStorage)
+    * QUnitChainer.storeTestResults(rTestResults)
     *
     * Save an object (Test Run Results) to storage under the QUnitChainer key value
     */
    storeTestResults: function (rTestResults) {
-      var store, rStorage = this.getStorage();
-      // Store test results in storage QUnitChainer/user agent/test plan name
-      if (rStorage) {
-         store = JSON.stringify(rTestResults);
-         rStorage.setItem(this.skey, store);
-      }
+      this.storeItem(this.skey, rTestResults, 'JSON');
    },
 
    /*
@@ -435,10 +489,7 @@ var QUnitChainer = {
     */
    getTestResults: function () {
       // Get test results from storage QUnitChainer/user agent/test plan name
-      var rTestResults = null, rStorage = this.getStorage();
-      if (rStorage) {
-         rTestResults = JSON.parse(rStorage.getItem(this.skey));
-      }
+      var rTestResults = this.fetchItem(this.skey, 'JSON');
       if (!rTestResults) {
          rTestResults = {};
       }
@@ -613,7 +664,7 @@ var QUnitChainer = {
     */
    injectControlPage: function (jqInjectAt) {
       jqInjectAt = jqInjectAt || 'body';
-      var html, title = 'QUnitChainer Control Page';
+      var html, title = 'QUnitChainer Control Page', refresh = Math.floor(this.autoRunInterval / 100) / 10.0;
       if (!!Plan && Plan.title) {
          title = Plan.title;
       }
@@ -626,6 +677,7 @@ var QUnitChainer = {
             '<input type="button" id="runTests" name="runTests" value="run tests">',
             '<input type="checkbox" id="bAutoRun" name="bAutoRun">',
             '<label for="bAutoRun">auto run</label>',
+            '<span id="autoRunInterval">' + refresh + ' sec</span>',
             '<input type="checkbox" id="bLog" name="bLog">',
             '<label for="bLog">logging</label>',
             '<input type="checkbox" id="bPause" name="bPause">',
@@ -749,7 +801,7 @@ var QUnitChainer = {
          Msg.push('length: ' + rStorage.length);
          for (idx = 0; idx < rStorage.length; idx++) {
             key = rStorage.key(idx);
-            value = rStorage.getItem(key);
+            value = this.fetchItem(key);
             if (value.length > maxlength) {
                value = "\n      " + value.substr(0, maxlength) + '...';
             }
@@ -796,10 +848,10 @@ var QUnitChainer = {
     * They will be displayed within the DIV with ID qunitchainer-dump
     */
    dumpStorage: function () {
-      var rStorage, dump = '';
+      var rTestResults, dump = '';
       if (this.getProperty('bDumpStorage')) {
-         rStorage = this.getTestResults();
-         dump = '<hr><b>' + this.storage + '[' + this.sskey + ']</b><pre>' + this.stringifyObj(this.Properties) + '</pre><b>' + this.storage + '[' + this.skey + ']</b><pre>' + this.stringifyObj(rStorage) + '</pre>';
+         rTestResults = this.getTestResults();
+         dump = '<hr><b>' + this.storage + '[' + this.sskey + ']</b><pre>' + this.stringifyObj(this.Properties) + '</pre><b>' + this.storage + '[' + this.skey + ']</b><pre>' + this.stringifyObj(rTestResults) + '</pre>';
       }
       jQuery('#qunitchainer-dump').html(dump);
    },
@@ -825,16 +877,16 @@ var QUnitChainer = {
    showTestSummary: function () {
       var passed = 0, failed = 0, userAgent = '', planURL = '', rTestPlan, moduleStatus, planName, Content = [], ModuleContent,
          userAgentStatus, overallStatus = 'qunit-pass',
-         rStorage = this.getTestResults();
+         rTestResults = this.getTestResults();
       this.maybeAlertStorage('QUC.showTestSummary()');
 
-      for (userAgent in rStorage) {
-         if (rStorage.hasOwnProperty(userAgent)) {
+      for (userAgent in rTestResults) {
+         if (rTestResults.hasOwnProperty(userAgent)) {
             userAgentStatus = 'pass';
             ModuleContent = [];
-            for (planURL in rStorage[userAgent]) {
-               if (rStorage[userAgent].hasOwnProperty(planURL)) {
-                  rTestPlan = rStorage[userAgent][planURL];
+            for (planURL in rTestResults[userAgent]) {
+               if (rTestResults[userAgent].hasOwnProperty(planURL)) {
+                  rTestPlan = rTestResults[userAgent][planURL];
                   moduleStatus = (rTestPlan.failed || rTestPlan.total === 0) ? 'fail' : 'pass';
                   if (moduleStatus === 'fail') {
                      ++failed;
@@ -844,6 +896,7 @@ var QUnitChainer = {
                   } else {
                      ++passed;
                   }
+
                   // jsLint says this is insecure, but it isn't
                   planName = planURL.replace(/^.+\//, '');
                   planName = planName.replace(/\/\/+/g, '/');

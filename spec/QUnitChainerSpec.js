@@ -55,12 +55,12 @@ var Test = {
 
    // Total number of describe() and it() blocks to test
    'totalSuites': 38,
-   'totalSpecs': 170,
+   'totalSpecs': 171,
    'fewerSpecsIE': 6,
    'skipTODO':     true,
    'skip':         true,
 
-   'VERSION': '1.4 $Id$',
+   'VERSION': '1.5 $Id$',
    'NUM_PROPERTIES': 8,
    'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
    'CheckBoxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
@@ -346,6 +346,10 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
    for (idx = 0; idx < Test.CheckBoxes.length; ++idx) {
       itShouldHaveCheckBox(Test.CheckBoxLabel[idx], Test.CheckBoxes[idx]);
    }
+
+   it('should show the auto refresh period', function () {
+      expect(jQuery('#autoRunInterval').text()).toEqual("15 sec");
+   });
 
    it('should have a message showing no tests plans are in storage', function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 16 ' + QUnitChainer.bLog);
