@@ -71,7 +71,7 @@ var QUnitChainer = {
    bAlertStorage:   false,   // flag set if alert boxes with browser storage should be displayed when storage is manipulated
    bPause:          false,   // flag set to pause before chaining to next test plan (storage and Plan.bPause are checked)
    bLog:            false,   // flag set if the global log() function should output to the console
-   bLogEvent:       true,   // flag set to log QUnit and Control page events
+   bLogEvent:       false,   // flag set to log QUnit and Control page events
    bTrace:          false,   // flag set to trace internal method calls
    bIsIE:           undefined, // flag set if browser is Internet Explorer
    bIsFF:           undefined,   // flag set if browser is Firefox
