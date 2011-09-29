@@ -18,29 +18,30 @@
 
 /*jslint browser: true, sloppy: true, white: false, nomen: true, plusplus: true, maxerr: 1000, indent: 3 */
 /*globals QUnit, QUnitChainer, Test, afterEach, beforeEach, cmpHTML, describe, document, itShouldHaveCheckBox, testCheckBoxFalse, testCheckBoxTrue,
-  expect, getKeys, it, jasmine, jQuery, spyOn, window, waits, runs
+  expect, getKeys, getPosition, it, jasmine, jQuery, spyOn, window, waits, runs
 */
 /*properties
     '-', CheckBoxLabel, CheckBoxes, ExpectDebugStorage, ExpectDumpStorage,
     ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName,
     ExpectTestModuleName, ExpectTestName, ExpectTestPlanTitle, ExpectUserAgent,
-    NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit, TestRunStorageFail,
-    TestRunStoragePass, Tests, VERSION, actual, addMatchers, 'after change',
-    alert, andCallThrough, andReturn, attr, autoRunInterval, bAlertStorage,
-    bAutoRun, bControl, bDumpStorage, bFollowChain, bHasHandlers,
-    bIsControlPage, bLog, bPause, bShowFailTitle, bShowPassed, begin, bindUIEvents,
-    browserIsIE, callCount, cancelAutoRun, checkStorage, checked,
-    cleanTestPlan, cleanUserAgent, clearProperties, clearTestResults, click,
-    console, currentEnv_, debugStorage, done, failed, fewerSpecsIE,
-    getDefaultProperties, getProperties, getProperty, getTestResults,
-    getURLProperties, handleAutoRun, header, host, href, html, init,
-    initControlPage, initTests, injectControlPage, innerHTML,
-    installQUnitHandlers, jqInjectAt, location, log, logIt, maybeAlertStorage,
-    module, moduleDone, moduleIdx, moduleStart, myAlert, name, nextSpecId_,
-    nextSuiteId_, nextTestPlan, not, passed, plan, protocol, renderPage, reset,
-    runtime, setLocation, setProperty, showControlPage, skey, skip, skipTODO,
-    storage, storeProperties, storeTestResults, stringifyObj, testDone,
-    testIdx, testPlan, testStart, tests, text, this, title, toBeDefined,
+    NUM_INPUTS, NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit,
+    TestRunStorageFail, TestRunStoragePass, Tests, VERSION, actual,
+    addMatchers, 'after change', alert, andCallThrough, andReturn, attr,
+    autoRunInterval, bAlertStorage, bAutoRun, bControl, bDumpStorage,
+    bFollowChain, bHasHandlers, bIsControlPage, bLog, bPause, bShowFailTitle,
+    bShowFixture, bShowPassed, begin, bindUIEvents, browserIsIE, callCount,
+    cancelAutoRun, checkStorage, checked, cleanTestPlan, cleanUserAgent,
+    clearProperties, clearTestResults, click, console, currentEnv_,
+    debugStorage, done, failed, fewerSpecsIE, getDefaultProperties,
+    getProperties, getProperty, getTestResults, getURLProperties,
+    handleAutoRun, header, host, href, html, init, initControlPage, initTests,
+    injectControlPage, innerHTML, installQUnitHandlers, jqInjectAt, location,
+    log, logIt, maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart,
+    myAlert, name, nextSpecId_, nextSuiteId_, nextTestPlan, not, passed, plan,
+    protocol, qunitHTML, renderPage, reset, runtime, setLocation, setProperty,
+    showControlPage, showFixture, skey, skip, skipTODO, storage,
+    storeProperties, storeTestResults, stringifyObj, testDone, testIdx,
+    testPlan, testStart, tests, text, this, title, toBeDefined,
     toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled,
     toHaveBeenCalledWith, toMatch, total, totalSpecs, totalSuites,
     urlParamsTrue, userAgent, value, wipeQUnitOutput
@@ -54,33 +55,44 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 38,
-   'totalSpecs': 171,
-   'fewerSpecsIE': 6,
+   'totalSuites': 40,
+   'totalSpecs': 186,
+   'fewerSpecsIE': 9,
    'skipTODO':     true,
    'skip':         true,
 
-   'VERSION': '1.5 $Id$',
-   'NUM_PROPERTIES': 8,
-   'Properties': ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
-   'CheckBoxes': ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
-   'CheckBoxLabel': ['auto run', 'alert', 'pause', 'logging', 'dump', 'passed', 'FAIL in title'],
+   'VERSION':        '1.5.1 $Id$',
+   'NUM_PROPERTIES': 9,
+   'NUM_INPUTS':     12,
+   'Properties':     ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle', 'bShowFixture'],
+   'CheckBoxes':     ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle', 'bShowFixture'],
+   'CheckBoxLabel':  ['auto run', 'alert', 'pause', 'logging', 'dump', 'passed', 'FAIL in title', '#qunit-fixture'],
+   'qunitHTML':      [
+      '<h1 id="qunit-header"><a href="sample/q-test.html"> QUnit example</a> <label><input name="noglobals" type="checkbox">noglobals</label><label><input name="notrycatch" type="checkbox">notrycatch</label></h1>',
+      '<h2 id="qunit-banner" class="qunit-fail"></h2>',
+      '<div id="qunit-testrunner-toolbar"><input type="checkbox" id="qunit-filter-pass"><label for="qunit-filter-pass">Hide passed tests</label></div>',
+      '<h2 id="qunit-userAgent">userAgent</h2>',
+      '<p id="qunit-testresult" class="result">Tests completed in ? milliseconds.<br><span class="passed">?</span> tests of <span class="total">?</span> passed, <span class="failed">?</span> failed.</p>',
+      '<ol id="qunit-tests"></ol>',
+      '<div id="qunit-fixture">QUNIT FIXTURE</div>',
+      ''
+   ].join('\n'),
 
-   'urlParamsTrue': 'url?bAutoRun&bAlertStorage&bFollowChain&bPause&bLog&bDumpStorage&bLogEvent&bTrace&bUnicodeTitle&autoRunInterval=60',
+   'urlParamsTrue':  'url?bAutoRun&bAlertStorage&bFollowChain&bPause&bLog&bDumpStorage&bLogEvent&bTrace&bUnicodeTitle&autoRunInterval=60&bShowPassed&bShowFailTitle&bShowFixture',
 
    'TestRunStorageFail': '{"mozilla":{"http://localhost:8888/qunit-chainer/q-test3.html":{"plan":"http://localhost:8888/qunit-chainer/q-test3.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - no tests","failed":0,"passed":0,"total":0,"log":{}}},"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan":"http://localhost:8888/qunit-chainer/q-test4.html","userAgent":"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header":"QUnit example - one passing test","failed":0,"passed":1,"total":1,"log":{}}}}',
    'TestRunStoragePass': '{"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan": "http://localhost:8888/qunit-chainer/q-test4.html","userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header": "QUnit example - no tests","failed": 0,"passed": 1,"total": 1,"log":{}}}}',
    'NoTestRunsMessage':  "\nNo test runs are stored in sessionStorage[QUCTest] use the run tests button to run some test plans.\n",
 
-   'ExpectDumpStorage':    '<hr> \n<b>sessionStorage[QUCTestSettings]</b><pre><br>{<br>   "bFollowChain": false,<br>   "bAutoRun": true,<br>   "bPause": true,<br>   "bLog": true,<br>   "bDumpStorage": true,<br>   "bAlertStorage": true,<br> "bShowPassed": true,<br> "bShowFailTitle": true<br>}<br></pre><b>sessionStorage[QUCTest]</b><pre><br>{<br>   "mozilla": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test3.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test3.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - no tests",<br>   "failed": 0,<br>   "passed": 0,<br>   "total": 0,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br>,<br>   "after change": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test4.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test4.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - one passing test",<br>   "failed": 0,<br>   "passed": 1,<br>   "total": 1,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br><br>}<br></pre>',
-   'ExpectDebugStorage':   'DEBUG\n' + window.location.protocol + '//' + window.location.host + '\nsessionStorage\nlength: 2\n 0: QUCTestSettings: \n {"bFollowChain":true,"bAutoRun...\n 1: QUCTest: \n {"after change":{"http://local...',
-   'ExpectTestPlanTitle':  'QUnit Test Example',
-   'ExpectUserAgent':      'userAgentMan',
-   'ExpectTestModuleName': 'Failing Unit Test with setup and teardown code',
-   'ExpectNoModuleName':   'Unknown Test Module, add a call to module() to this test plan',
-   'ExpectTestName':       'Sample test fails',
+   'ExpectDumpStorage':       '<hr> \n<b>sessionStorage[QUCTestSettings]</b><pre><br>{<br>   "bFollowChain": false,<br>   "bAutoRun": true,<br>   "bPause": true,<br>   "bLog": true,<br>   "bDumpStorage": true,<br>   "bAlertStorage": true,<br> "bShowPassed": true,<br> "bShowFailTitle": true,<br> "bShowFixture": true<br>}<br></pre><b>sessionStorage[QUCTest]</b><pre><br>{<br>   "mozilla": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test3.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test3.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - no tests",<br>   "failed": 0,<br>   "passed": 0,<br>   "total": 0,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br>,<br>   "after change": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test4.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test4.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - one passing test",<br>   "failed": 0,<br>   "passed": 1,<br>   "total": 1,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br><br>}<br></pre>',
+   'ExpectDebugStorage':      'DEBUG\n' + window.location.protocol + '//' + window.location.host + '\nsessionStorage\nlength: 2\n 0: QUCTestSettings: \n {"bFollowChain":true,"bAutoRun...\n 1: QUCTest: \n {"after change":{"http://local...',
+   'ExpectTestPlanTitle':     'QUnit Test Example',
+   'ExpectUserAgent':         'userAgentMan',
+   'ExpectTestModuleName':    'Failing Unit Test with setup and teardown code',
+   'ExpectNoModuleName':      'Unknown Test Module, add a call to module() to this test plan',
+   'ExpectTestName':          'Sample test fails',
    'ExpectMatchAlertMessage': 'Tests finished, chaining to next-test-plan.html\nfrom ',
-   'ExpectEndAlertMessage': 'All test plans finished, showing results.',
+   'ExpectEndAlertMessage':   'All test plans finished, showing results.',
 
    '-': '-'
 };
@@ -300,10 +312,16 @@ describe("QUnitChainer.injectControlPage() Control Page - inject into document",
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 14 ' + QUnitChainer.bLog);
       expect(jQuery('div#qunitchainer-dump').length).toEqual(1);
    });
+
+   it('should have a div#qunit-fixture on the page', function () {
+      expect(jQuery('div#qunit-fixture').length).toEqual(1);
+      expect(jQuery('div#qunit-fixture').html()).toEqual('If you can see this then the #qunit-fixture DIV in your test plans will be visible.');
+   });
+
 });
 
 describe("QUnitChainer.showControlPage() Control Page - show control page", function () {
-   var idx, title = 'nothing', NUM_INPUTS = 11;
+   var idx, title = 'nothing';
    beforeEach(function () {
       title = document.title;
       QUnitChainer.showControlPage('#test-dom-output');
@@ -323,9 +341,8 @@ describe("QUnitChainer.showControlPage() Control Page - show control page", func
    });
 
    it('should have some form inputs', function () {
-      expect(jQuery('#test-dom-output input').length).toEqual(NUM_INPUTS);
+      expect(jQuery('#test-dom-output input').length).toEqual(Test.NUM_INPUTS);
    });
-
 
    it('should have a text input field for the test plan to run', function () {
       expect(jQuery('input#testPlan[type="text"][name="testPlan"][id="testPlan"][size="40"]').length).toEqual(1);
@@ -904,6 +921,40 @@ describe("QUnitChainer.clickShowPassed() Control Page - clicking Show Passed che
    }
 });
 
+describe("QUnitChainer.clickShowFixture() Control Page - clicking Show Fixture checkbox positions the qunit-fixture so it is visible", function () {
+   var title = 'nothing', rStorage = null, posBefore = 'nothing', posAfter = 'somewhere';
+
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for bShowFixture checkbox click test');
+
+      title = document.title;
+      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
+      QUnitChainer.showControlPage('#test-dom-output');
+      posBefore = getPosition(jQuery('#qunit-fixture'));
+      QUnitChainer.bindUIEvents();
+      jQuery('#bShowFixture').click();
+      rStorage = QUnitChainer.getProperties();
+   });
+
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and Plan 7) called');
+      document.title = title;
+      Plan = {};
+   });
+
+   // TODO THESE TESTS FAIL FAIL IN IE BUT THE CODE WORKS WHEN IT RUNS ON ITS OWN!!
+   if (!QUnitChainer.browserIsIE()) {
+      it("should have bShowFixture property set and should have positioned the #qunit-fixture div so it is visible", function () {
+         expect(posBefore).toEqual('absolute -10000px -10000px');
+         expect(rStorage.bShowFixture).toEqual(true);
+         posAfter = getPosition(jQuery('#qunit-fixture'));
+         expect(posAfter).toEqual('relative 0px 0px');
+      });
+   }
+});
+
 describe("QUnitChainer.clickClearStorage() Control Page - clicking Clear Storage button clears all of storage", function () {
    var idx, title = 'nothing', rProperties = null, rTestSummary = null;
 
@@ -1093,10 +1144,12 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit existence and no Plan.bCont
       title = document.title;
       Plan = { 'nextTestPlan': "next-test-plan.html" };
       window.QUnit = {};
+      jQuery('#test-dom-output').html(Test.qunitHTML);
 
       spyOn(QUnitChainer, 'installQUnitHandlers').andCallThrough();
       spyOn(QUnitChainer, 'initTests').andCallThrough();
       spyOn(QUnitChainer, 'initControlPage').andReturn();
+      spyOn(QUnitChainer, 'showFixture').andCallThrough();
 
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
@@ -1111,17 +1164,55 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit existence and no Plan.bCont
       window.QUnit = null;
    });
 
-   it("should have called methods to enter QUnit run mode", function () {
+   it("should have called methods to enter QUnit run mode with fixture hidden", function () {
       expect('bIsControlPage ' + QUnitChainer.bIsControlPage).toEqual('bIsControlPage false');
       expect('bHasHandlers ' + QUnitChainer.bHasHandlers).toEqual('bHasHandlers true');
       expect(QUnitChainer.initControlPage).not.toHaveBeenCalled();
       expect(QUnitChainer.installQUnitHandlers).toHaveBeenCalled();
       expect(QUnitChainer.initTests).toHaveBeenCalled();
+      expect(QUnitChainer.showFixture).toHaveBeenCalledWith(false);
       expect(QUnit.begin).toBeDefined();
       expect(QUnit.done).toBeDefined();
       expect(QUnit.moduleStart).toBeDefined();
       expect(QUnit.moduleDone).toBeDefined();
       expect(QUnit.testStart).toBeDefined();
+      expect(getPosition(jQuery('#qunit-fixture'))).toEqual('absolute -10000px -10000px');
+
+   });
+});
+
+describe("QUnitChainer.init() QUnit Run Mode - QUnit mode with fixture visible due to bShowFixture flag", function () {
+   var title = document.title;
+
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up QUnit run mode with visible fixture) called');
+      title = document.title;
+      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      window.QUnit = {};
+      jQuery('#test-dom-output').html(Test.qunitHTML);
+
+      // Turn on show fixture flag
+      QUnitChainer.setProperty('bShowFixture', true);
+      QUnitChainer.storeProperties();
+
+      spyOn(QUnitChainer, 'showFixture').andCallThrough();
+
+      // Spy on the setLocation function and prevent it from actually changing the document.location
+      spyOn(QUnitChainer, 'setLocation').andReturn();
+
+      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+   });
+
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, Plan and QUnit 0) called');
+      document.title = title;
+      Plan = {};
+      window.QUnit = null;
+   });
+
+   it("should have the qunit fixture visible", function () {
+      expect(QUnitChainer.showFixture).toHaveBeenCalledWith(true);
+      expect(getPosition(jQuery('#qunit-fixture'))).toEqual('relative 0px 0px');
    });
 });
 

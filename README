@@ -1,6 +1,12 @@
 [QUnitChainer](https://github.com/bcowgill/QUnitChainer) - An Auto Runner for the QUnit JavaScript Unit Testing framework.
 ================================
 
+Outline
+
+Auto-runner for QUnit Javascript test plans.
+TDD, BDD and Continuous Testing during development
+Useful for running tests on mobile devices.
+
 You can get the latest minimal release files from this URL:
 https://github.com/bcowgill/QUnitChainer/blob/master/release/QUnitChainer.tar.gz?raw=true
 
@@ -17,12 +23,12 @@ project to test its code and plugins but is capable of testing any generic
 JavaScript code (and even capable of testing JavaScript code on the server-side).
 
 QUnitChainer is especially useful for developing code with test-driven development
-or behavioural-driven development and continuous testing.  The control page has an
-auto-run checkbox which will cause the tests to run every 15 seconds. You can have
-every supported browser open with the auto-run turned on and as you add tests and
-change the code your test plans will be re-run. You can simply Alt-Tab between
-browser windows to find a check or cross mark in the title bar and see if your tests
-are still good.
+(TDD) or behavioural-driven development (BDD) and continuous testing.  The control
+page has an auto-run checkbox which will cause the tests to run every 15 seconds.
+You can have every supported browser open with the auto-run turned on and as you
+add tests and change the code your test plans will be re-run. You can simply
+Alt-Tab between browser windows to find a check or cross mark in the title bar and
+see if your tests are still good.
 
 It is also useful for testing on a mobile or tablet device.  In this case the tests
 can continuously run while you upload your code and tests to a test site on the same
@@ -37,37 +43,43 @@ original style sheet if you prefer.
 
 Files:
 0-control.html     - Control page for running test plans with QUnitChainer
+0-monitor.html     - Monitor page for viewing test results on a Big Screen
 qunitchainer.css   - QUnit stylesheet for 0-control.html to distinguish from QUnit normal style
 QUnitChainer.js    - The QUnitChainer javascript library
+replace.pl         - Perl script which can inject necessary includes into a bunch
+                     of pre-existing QUnit tests
 sample/*.html *.js - Example QUnit test plans chained together with QUnitChainer
 
 How to Use:
 
-Place 0-control.html, qunitchainer.css and QUnitChainer.js at the top of the
+Place 0-control.html, 0-monitor.html, qunitchainer.css and QUnitChainer.js at the top of the
 directory tree where you will be running QUnit test plans.
 
-Edit 0-control.html to refer to where you have placed the jquery and json2 libraries.
+Edit 0-control.html and 0-monitor.html to refer to where you have placed the
+jquery and json2 libraries.
 You should also set the nextTestPlan value to the first test plan you need to run.
 
+The code to change looks like this:
 <link rel="stylesheet" href="qunitchainer.css" type="text/css"/>
 <script src="jquery-1.6.2.min.js"> </script>
-<script type="text/javascript" src="QUnitChainer.js"></script>
+<script src="QUnitChainer.js"></script>
 <!--[if lt IE 8 ]> <script language="javascript" src="json2.js"></script> <![endif]-->
-<script type="text/javascript">
+<script>
 var Plan = {
-  // Specify the first test plan to run.
-  nextTestPlan: 'sample/q-test.html',
-  // Specify that we are the control page so that QUnitChainer initialises itself accordingly
-  bControl: true
+   // Specify the first test plan to run.
+   nextTestPlan: 'sample/q-test.html',
+   // Specify that we are the control page so that QUnitChainer initialises itself accordingly
+   bControl: true
 };
+</script>
 
-Look at the .html files in the sample directory to see how to use QUnitChainer with
-an existing QUnit test plan.
+Look at the .html files in the sample directory to see how to use QUnitChainer
+with an existing QUnit test plan.
 
 In essence though, you will need to:
 
-Add a reference to jquery, json2 and QUnitChainer to your test plan and then add a
-javasript block after the inclusion of QUnitChainer.
+Add a reference to jquery, json2 and QUnitChainer to your test plan and then
+add a javasript block after the inclusion of QUnitChainer.
 
 <script type="text/javascript">
 var Plan = {
@@ -78,11 +90,14 @@ var Plan = {
 QUnitChainer.init();
 </script>
 
+If you want to instrument a bunch of QUnit tests there is a replace.pl script
+which you can modify and run using perl.
+
 Each test plan should refer to the next test plan to run in the chain. The final
 test plan can refer back to the 0-control.html page or can be left undefined.
 
-When you run your test plan the QUnitChainer will record the results in browser
-storage for use by the 0-control.html page.
+When you run your test plan the QUnitChainer will record the results in HTML5
+browser storage for use by the 0-control.html page.
 
 Open the 0-control.html page in your browser (or all the ones you support)
 Ensure the correct relative path to the first test plan is shown in the text box
@@ -99,6 +114,18 @@ storage with the clear storage button. The dump checkbox will show the contents
 of browser storage on the control page. The alert checkbox will show alert
 messages displaying the contents of storage at key points of the QUnitChainer
 run cycle.
+
+Normally only failing test plans will be displayed. Use the show passed checkbox
+to display passing test plans as well.
+
+Older operating systems will not display the unicode check mark or cross character.
+Use the show FAIL in title checkbox to display PASS or FAIL in the title bar
+instead.
+
+QUnit supports test fixtures with the DIV id=qunit-fixture. DOM elements within
+this div will be saved and restored before and after every test. The show
+#qunit-fixture checkbox will make this fixture visible as it is usually
+'off screen.'
 
 When auto run is turned on you should ensure your browser or proxy is set not
 to cache pages. Then you can modify your javascript and when the tests are
@@ -119,5 +146,6 @@ QUnit - http://docs.jquery.com/QUnit
 Jasmine - https://github.com/pivotal/jasmine/wiki
 JSON2 - http://www.JSON.org/json2.js
 Sinon - http://sinonjs.org/
+jscoverage - http://siliconforks.com/jscoverage/
 
-VERSION: 1.5 $Id$
+VERSION: 1.5.1 $Id$

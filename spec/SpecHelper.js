@@ -5,7 +5,7 @@
 /*jslint browser: true, sloppy: true, white: false, plusplus: true, maxerr: 1000, indent: 3 */
 /*global cmpHTML, QUnitChainer, expect, getKeys, it, itShouldHaveCheckBox, jQuery, testCheckBoxFalse, testCheckBoxTrue */
 /*properties
-    browserIsIE, checked, html, replace, toEqual,
+    browserIsIE, checked, css, html, replace, toEqual,
 */
 
 function getKeys(rObj) {
@@ -78,5 +78,10 @@ function testCheckBoxTrue(key) {
    it("should have checkbox " + key + " CHECKED", function () {
       expect(key + ' ' + jQuery('input[type="checkbox"][name="' + key + '"]')[0].checked).toEqual(key + ' true');
    });
+}
+
+function getPosition(rJQ) {
+   var pos = [rJQ.css('position'), rJQ.css('top'), rJQ.css('left')].join(' ');
+   return pos;
 }
 

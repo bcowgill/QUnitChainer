@@ -34,26 +34,26 @@
     '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
     addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
     bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
-    bIsIE, bLog, bLogEvent, bPause, bShowFailTitle, bShowPassed, bTrace, begin,
-    bindUIEvents, browserIsFF, browserIsIE, cancelAutoRun, change,
-    checkStorage, checked, cleanTestPlan, cleanUserAgent, clear,
+    bIsIE, bLog, bLogEvent, bPause, bShowFailTitle, bShowFixture, bShowPassed,
+    bTrace, begin, bindUIEvents, browserIsFF, browserIsIE, cancelAutoRun,
+    change, checkStorage, checked, cleanTestPlan, cleanUserAgent, clear,
     clearAllStorage, clearProperties, clearStorage, clearTestResults, click,
     clickAlertStorage, clickAutoRun, clickClearStorage, clickClearTests,
     clickDumpStorage, clickLog, clickPause, clickRunTests, clickShowFailTitle,
-    clickShowPassed, console, css, debugStorage, done, dumpStorage, failed,
-    fetchItem, getDefaultProperties, getItem, getProperties, getProperty,
-    getStorage, getTestResults, handleAutoRun, header, host, href, html, in,
-    init, initBrowser, initControlPage, initTests, injectControlPage,
-    installAutoRun, installQUnitHandlers, jqInjectAt, key, location, log,
-    logEvent, logIt, maybeAlertStorage, message, module, moduleDone, moduleIdx,
-    moduleStart, my, myAlert, name, nextTestPlan, noModuleName, passed, plan,
-    protocol, pushArray, ready, removeClass, removeItem, renderPage, replace,
-    reset, result, 'self.Tests', setControlPageTestStatus, setItem,
-    setLocation, setProperty, showControlPage, showFixture,
-    showHidePassedTests, showTestSummary, skey, sskey, storage, storeItem,
-    storeProperties, storeTestResults, stringifyObj, testDone, testFailures,
-    testIdx, testPasses, testStart, testStatus, text, title, total, trace,
-    updateControlFields, userAgent, value, wipeQUnitOutput
+    clickShowFixture, clickShowPassed, console, css, debugStorage, done,
+    dumpStorage, failed, fetchItem, getDefaultProperties, getItem,
+    getProperties, getProperty, getStorage, getTestResults, handleAutoRun,
+    header, host, href, html, in, init, initBrowser, initControlPage,
+    initTests, injectControlPage, installAutoRun, installQUnitHandlers,
+    jqInjectAt, key, location, log, logEvent, logIt, maybeAlertStorage,
+    message, module, moduleDone, moduleIdx, moduleStart, my, myAlert, name,
+    nextTestPlan, noModuleName, passed, plan, protocol, pushArray, ready,
+    removeClass, removeItem, renderPage, replace, reset, result, 'self.Tests',
+    setControlPageTestStatus, setItem, setLocation, setProperty,
+    showControlPage, showFixture, showHidePassedTests, showTestSummary, skey,
+    sskey, storage, storeItem, storeProperties, storeTestResults, stringifyObj,
+    testDone, testFailures, testIdx, testPasses, testStart, testStatus, text,
+    title, total, trace, updateControlFields, userAgent, value, wipeQUnitOutput
 */
 
 /*
@@ -61,7 +61,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.5 $Id$',
+   VERSION: '1.5.1 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -71,7 +71,7 @@ var QUnitChainer = {
    bAlertStorage:   false,   // flag set if alert boxes with browser storage should be displayed when storage is manipulated
    bPause:          false,   // flag set to pause before chaining to next test plan (storage and Plan.bPause are checked)
    bLog:            false,   // flag set if the global log() function should output to the console
-   bLogEvent:       false,   // flag set to log QUnit and Control page events
+   bLogEvent:       true,   // flag set to log QUnit and Control page events
    bTrace:          false,   // flag set to trace internal method calls
    bIsIE:           undefined, // flag set if browser is Internet Explorer
    bIsFF:           undefined,   // flag set if browser is Firefox
@@ -88,7 +88,7 @@ var QUnitChainer = {
    Properties: {},           // properties saved to storage under skey
    Tests: {},                // test plan results saved to storage under sskey
 
-   UICheckBoxes: ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle'],
+   UICheckBoxes: ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFixture', 'bShowFailTitle'],
    QUnitHandlers: ['begin', 'done', 'moduleStart', 'moduleDone', 'testStart'],
    noModuleName: 'Unknown Test Module, add a call to module() to this test plan',
 
@@ -135,6 +135,7 @@ var QUnitChainer = {
       // unless the control mode flag is turned on.
       if (!this.bIsControlPage && window.QUnit) {
          this.initTests();
+         this.showFixture(this.getProperty('bShowFixture'));
          this.installQUnitHandlers();
       }
 
@@ -195,13 +196,20 @@ var QUnitChainer = {
    },
 
    /*
-    * QUnitChainer.showFixture()
+    * QUnitChainer.showFixture(bShowFixture)
     *
     * Show the qunit-fixture div so that you can see what is happening
     * during tests which manipulate the DOM
+    *
+    * bShowFixture - false hides the fixture, true shows it. defaults to true
     */
-   showFixture: function () {
-      jQuery('#qunit-fixture').css('position', 'relative').css('top', 0).css('left', 0);
+   showFixture: function (bShowFixture) {
+      bShowFixture = bShowFixture === undefined ? true : bShowFixture;
+      if (bShowFixture) {
+         jQuery('#qunit-fixture').css('position', 'relative').css('top', 0).css('left', 0);
+      } else {
+         jQuery('#qunit-fixture').css('position', 'absolute').css('top', -10000).css('left', -10000);
+      }
    },
 
    /*
@@ -220,6 +228,7 @@ var QUnitChainer = {
          bAlertStorage:  false,  // flag set to alert with browser storage values for debugging
          bShowPassed:    false,  // flag set to show the test plans which have passed. Usually hidden.
          bShowFailTitle: false,  // flag set to show FAIL in the title instead of unicode check/cross marks
+         bShowFixture:   false,  // flag set to show the qunit-fixture DIV in test plans
          '-': '-'
       };
       delete (rProperties['-']);
@@ -691,11 +700,14 @@ var QUnitChainer = {
             'show',
             '<input type="checkbox" id="bShowPassed" name="bShowPassed">',
             '<label for="bShowPassed">passed</label>',
+            '<input type="checkbox" id="bShowFixture" name="bShowFixture">',
+            '<label for="bShowFixture">#qunit-fixture</label>',
             '<input type="checkbox" id="bShowFailTitle" name="bShowFailTitle">',
             '<label for="bShowFailTitle">FAIL in title</label>',
             '</div>',
             '<h2 id="qunit-userAgent"></h2>',
             '<p id="qunit-testresult" class="result"></p>',
+            '<div id="qunit-fixture">If you can see this then the #qunit-fixture DIV in your test plans will be visible.</div>',
             '<ol id="qunit-tests">',
             '</ol>',
             '<div id="qunitchainer-dump"></div>',
@@ -925,7 +937,7 @@ var QUnitChainer = {
    },
 
    /*
-    * QUnitChainer.setControlPageTestStatus()
+    * QUnitChainer.showHidePassedTests()
     *
     * Set the hidepass class on the #qunit-tests element based on the bShowPassed property
     */
@@ -980,6 +992,7 @@ var QUnitChainer = {
       jQuery('#bDumpStorage').change(function () { rObj.clickDumpStorage(); });
       jQuery('#bAlertStorage').change(function () { rObj.clickAlertStorage(); });
       jQuery('#bShowPassed').change(function () { rObj.clickShowPassed(); });
+      jQuery('#bShowFixture').change(function () { rObj.clickShowFixture(); });
       jQuery('#bShowFailTitle').change(function () { rObj.clickShowFailTitle(); });
       jQuery('#runTests').click(function () { rObj.clickRunTests(); });
       jQuery('#clearTests').click(function () { rObj.clickClearTests(); });
@@ -1139,6 +1152,20 @@ var QUnitChainer = {
    },
 
    /*
+    * QUnitChainer.clickShowFixture(event)
+    * jQuery Event handler for when the Show Fixture checkbox is clicked.
+    * Change the value in Storage and update the positioning of the #qunit-fixture element
+    */
+   clickShowFixture: function (event) {
+      var checked = jQuery('#bShowFixture')[0].checked;
+      this.logEvent('QUC.clickShowFixture(' + JSON.stringify(event) + ') ' + checked);
+      this.setProperty('bShowFixture', checked);
+      this.storeProperties();
+      this.maybeAlertStorage('QUC.clickShowFixture()');
+      this.showFixture(checked);
+   },
+
+   /*
     * QUnitChainer.setLocation(URL)
     *
     * Set the document.location to another URL to run all the chained test plans
@@ -1206,6 +1233,7 @@ var QUnitChainer = {
     * Log something to the console log if flag bLog is true
     */
    logIt: function (bLog, something) {
+      var key, somethingNice = '';
       if (bLog && window.console && window.console.log) {
          if (typeof something === 'object' && something['in'] && !this.browserIsFF() && !this.browserIsIE()) {
             // All browsers but Firefox log objects in console window in an obscure manner
@@ -1215,7 +1243,26 @@ var QUnitChainer = {
          }
          // convert to JSON string for browsers with less capable console log (I.E. <=8 checked so far)
          if (this.browserIsIE()) {
-            something = JSON.stringify(something);
+            try {
+               somethingNice = JSON.stringify(something);
+               // HTMLDivElement and probably other native objects in IE don't JSON stringify well...
+               if (somethingNice === undefined && typeof something === 'object') {
+                  somethingNice = {};
+                  for (key in something) {
+                     if (typeof something[key] !== 'function') {
+                        if (typeof something.hasOwnProperty !== 'undefined') {
+                           if (something.hasOwnProperty(key)) {
+                              somethingNice[key] = something[key];
+                           }
+                        } else {
+                           somethingNice[key] = something[key];
+                        }
+                     }
+                  }
+                  somethingNice = JSON.stringify(somethingNice);
+               }
+            } catch (exception) {}
+            something = somethingNice;
          }
          window.console.log(something);
       }
