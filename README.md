@@ -177,4 +177,8 @@ the Jasmine Javascript testing framework (which was used to unit test QUnitChain
 
 Brent S.A. Cowgill
 
+## Refs for this file
+
 [GIT Markdown Reference](http://github.github.com/github-flavored-markdown/)
+[Markdown Syntax](http://daringfireball.net/projects/markdown/syntax)
+[Markdown Console](http://github.github.com/github-flavored-markdown/preview.html)
