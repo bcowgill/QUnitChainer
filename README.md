@@ -6,6 +6,8 @@
 * TDD, BDD and Continuous Testing during development
 * Useful for running tests on mobile devices.
 
+## VERSION: 1.5.1 $Id$
+
 ## Quick Links
 
 You can get the latest minimal release files from
@@ -170,4 +172,3 @@ the Jasmine Javascript testing framework (which was used to unit test QUnitChain
 
 Brent S.A. Cowgill
 
-## VERSION: 1.5.1 $Id$
