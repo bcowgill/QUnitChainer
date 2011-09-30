@@ -53,13 +53,13 @@ prefer.
 
 ## Files
 
-0-control.html     - Control page for running test plans with QUnitChainer
-0-monitor.html     - Monitor page for viewing test results on a Big Screen
-qunitchainer.css   - QUnit stylesheet for 0-control.html to distinguish from QUnit normal style
-QUnitChainer.js    - The QUnitChainer javascript library
-replace.pl         - Perl script which can inject necessary includes into a bunch
-                     of pre-existing QUnit tests
-sample/*.html *.js - Example QUnit test plans chained together with QUnitChainer
+* 0-control.html     - Control page for running test plans with QUnitChainer
+* 0-monitor.html     - Monitor page for viewing test results on a Big Screen
+* qunitchainer.css   - QUnit stylesheet for 0-control.html to distinguish from QUnit normal style
+* QUnitChainer.js    - The QUnitChainer javascript library
+* replace.pl         - Perl script which can inject necessary includes into a bunch
+                       of pre-existing QUnit tests
+* sample/*.html *.js - Example QUnit test plans chained together with QUnitChainer
 
 ## How to Use
 
@@ -73,6 +73,8 @@ jquery and json2 libraries.
 You should also set the nextTestPlan value to the first test plan you need to run.
 
 The code to change looks like this:
+
+<verbatim>
 <link rel="stylesheet" href="qunitchainer.css" type="text/css"/>
 <script src="jquery-1.6.2.min.js"> </script>
 <script src="QUnitChainer.js"></script>
@@ -85,6 +87,7 @@ var Plan = {
    bControl: true
 };
 </script>
+</verbatim>
 
 ### Customize Test Plans
 
@@ -141,7 +144,7 @@ instead.
 
 QUnit supports test fixtures with the DIV id=qunit-fixture. DOM elements within
 this div will be saved and restored before and after every test. The show
-#qunit-fixture checkbox will make this fixture visible as it is usually
+qunit-fixture checkbox will make this fixture visible as it is usually
 'off screen.'
 
 When auto run is turned on you should ensure your browser or proxy is set not
