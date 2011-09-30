@@ -38,11 +38,16 @@ can continuously run while you upload your code and tests to a test site on the 
 Wi-Fi network as your mobile or tablet. You don't have to navigate to each test
 plan individually on the device.
 
-QUnitChainer requires at least jquery 1.6.1 to be included in your QUnit tests and
-json2.js if you plan to run your tests in older versions of Internet Explorer
-(IE7 or less) It includes a modified qunit.css file so the control page is
-distinguishable from the usual qunit test pages.  However you can switch to the
-original style sheet if you prefer.
+## Requirements
+
+QUnitChainer requires:
+
+* at least jquery 1.6.1 to be included in your QUnit tests
+* json2.js if you plan to run your tests in older versions of Internet Explorer (IE7 or less)
+
+It includes a modified qunit.css file so the control page is distinguishable from the
+usual qunit test pages.  However you can switch to the original style sheet if you
+prefer.
 
 ## Files
 
@@ -154,12 +159,12 @@ The browsers that this has currently been tested with are:
 The Author of QUnitChainer extends acknowledgements to the authors of QUnit and
 the Jasmine Javascript testing framework (which was used to unit test QUnitChainer)
 
-* jQuery - http://jquery.com/
-* QUnit - http://docs.jquery.com/QUnit
-* Jasmine - https://github.com/pivotal/jasmine/wiki
-* JSON2 - http://www.JSON.org/json2.js
-* Sinon - http://sinonjs.org/
-* jscoverage - http://siliconforks.com/jscoverage/
+* [jQuery](http://jquery.com/)
+* [QUnit](http://docs.jquery.com/QUnit)
+* [Jasmine](https://github.com/pivotal/jasmine/wiki)
+* [JSON2](http://www.JSON.org/json2.js)
+* [Sinon](http://sinonjs.org/)
+* [jscoverage](http://siliconforks.com/jscoverage/)
 
 ## Contributors
 
