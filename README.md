@@ -74,7 +74,7 @@ You should also set the nextTestPlan value to the first test plan you need to ru
 
 The code to change looks like this:
 
-<verbatim>
+```html
 <link rel="stylesheet" href="qunitchainer.css" type="text/css"/>
 <script src="jquery-1.6.2.min.js"> </script>
 <script src="QUnitChainer.js"></script>
@@ -87,7 +87,7 @@ var Plan = {
    bControl: true
 };
 </script>
-</verbatim>
+```
 
 ### Customize Test Plans
 
@@ -99,6 +99,7 @@ In essence though, you will need to:
 Add a reference to jquery, json2 and QUnitChainer to your test plan and then
 add a javasript block after the inclusion of QUnitChainer.
 
+```html
 <script type="text/javascript">
 var Plan = {
   // Specify the test plan to run after this one
@@ -107,6 +108,7 @@ var Plan = {
 };
 QUnitChainer.init();
 </script>
+```
 
 If you want to instrument a bunch of QUnit tests there is a replace.pl script
 which you can modify and run using perl.
