@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# VERSION: 1.5.1 $Id$
+# VERSION: 1.5.2 $Id$
 #
 # This script will search and replace for the inclusion of qunit.css, qunit.js, jquery-x.js
 # and replace with new locations for these files as well as inject the QUnitChainer includes
@@ -63,6 +63,13 @@ my %Replace =
 #   'var title = "Test " \+ TEST\.story \+ ": Scenario " \+ TEST\.scenario;' => '',
 #   'jQuery\("head title"\)\.html\(title \+ ": " \+ TEST\.description\);' => qq{jQuery("head title").html(TEST.title + ": " + TEST.description);},
 #   'jQuery\("#qunit-header"\)\.html\(title\);' => qq{jQuery("#qunit-header").html(TEST.title);},
+
+
+   # Some search/replace needed on test plans to make jsLint happy
+   ' type="text/javascript"' => '',
+#   '\t' => '   ',
+#   '/\*globals' => '/*global',
+   '[ \t]+\n' => '\n',
 );
 
 # @Tests is the list of tests to run in the desired order easily generated with a command like so:
