@@ -98,35 +98,38 @@ var QUnitChainer = {
     * Initialise the object
     */
    init: function (rParams) {
-      this.bTrace = this.bTrace || (!!Plan && (Plan.bTrace || false));
+      rParams = rParams || {};
+      this.Plan = rParams;
+      this.bTrace = this.bTrace || (rParams.bTrace || false);
       this.trace('QUC.init(' + JSON.stringify(rParams) + ')');
 
-      this.bAlertStorage = !!Plan && (Plan.bAlertStorage || false);
+      this.bAlertStorage = rParams.bAlertStorage || false;
       this.maybeAlertStorage('QUC.init()');
 
       this.bIsControlPage = false;
       this.bHasHandlers   = false;
-      this.bLogEvent      = this.bLogEvent || (!!Plan && (Plan.bLogEvent || false));
-      this.bLog           = this.bLog || (!!Plan && (Plan.bLog || false));
-      this.nextTestPlan   = !!Plan && (Plan.nextTestPlan || false);
+      this.bLogEvent      = this.bLogEvent || (rParams.bLogEvent || false);
+      this.bLog           = this.bLog || (rParams.bLog || false);
+      this.nextTestPlan   = rParams.nextTestPlan || false;
 
       this.initBrowser();
 
-      if (rParams) {
-         this.storage = rParams.storage || this.storage;
-         this.skey    = rParams.skey || this.skey;
-         this.jqInjectAt = rParams.jqInjectAt || this.jqInjectAt;
-      }
+      this.storage = rParams.storage || this.storage;
+      this.skey    = rParams.skey || this.skey;
+      this.jqInjectAt = rParams.jqInjectAt || this.jqInjectAt;
       this.sskey = this.skey + 'Settings';
 
       this.Properties = this.getProperties();
-      this.bPause = this.getProperty('bPause') || (!!Plan && (Plan.bPause || false));
-      this.bAlertStorage = this.getProperty('bAlertStorage') || (!!Plan && (Plan.bAlertStorage || false));
+      this.bPause = this.getProperty('bPause') || (rParams.bPause || false);
+      this.bAlertStorage = this.getProperty('bAlertStorage') || (Plan.bAlertStorage || false);
       this.maybeAlertStorage('QUC.init() - getProperties()');
 
       // If control page flag is set, initialize the control page when document is ready.
-      if (!!Plan && Plan.bControl) {
+      if (rParams.bControl) {
          this.bIsControlPage = true;
+         if (this.getProperty('bFollowChain')) {
+            this.saveJSCoverage();
+         }
          jQuery('document').ready(function () {
             QUnitChainer.initControlPage(this.jqInjectAt);
          });
@@ -445,6 +448,38 @@ var QUnitChainer = {
    },
 
    /*
+    * QUnitChainer.getAllStorage()
+    *
+    * Get all items from storage. In effect it makes a backup of storage.
+    */
+   getAllStorage: function () {
+      var idx, key, rAllStorage = {}, rStorage = this.getStorage();
+      if (rStorage) {
+         for (idx = 0; idx < rStorage.length; idx++) {
+            key = rStorage.key(idx);
+            rAllStorage[key] = this.fetchItem(key);
+         }
+      }
+      return rAllStorage;
+   },
+
+   /*
+    * QUnitChainer.saveToStorage(rObj)
+    *
+    * Save object to  storage. Each key of the object is used as a key in storage..
+    */
+   saveToStorage: function (rObj) {
+      var key, rStorage = this.getStorage();
+      if (rStorage) {
+         for (key in rObj) {
+            if (rObj.hasOwnProperty(key)) {
+               rStorage.setItem(key, rObj[key]);
+            }
+         }
+      }
+   },
+
+   /*
     * QUnitChainer.storeProperties()
     *
     * Store the QUnitChainer.Properties data in storage under the QUnitChainerSettings key value.
@@ -674,8 +709,8 @@ var QUnitChainer = {
    injectControlPage: function (jqInjectAt) {
       jqInjectAt = jqInjectAt || 'body';
       var html, title = 'QUnitChainer Control Page', refresh = Math.floor(this.autoRunInterval / 100) / 10.0;
-      if (!!Plan && Plan.title) {
-         title = Plan.title;
+      if (this.Plan.title) {
+         title = this.Plan.title;
       }
       if (jQuery('#qunit-header').length === 0) {
          html = [
@@ -957,8 +992,8 @@ var QUnitChainer = {
     */
    setControlPageTestStatus: function (status) {
       var prefix, number = 1, rBanner = jQuery('#qunit-banner'), title = jQuery('#qunit-header').html();
-      if (!!Plan && Plan.title) {
-         title = Plan.title;
+      if (this.Plan.title) {
+         title = this.Plan.title;
       }
       // Use last status if undefined, and save status in object
       status = status || this.testStatus;
@@ -1210,6 +1245,18 @@ var QUnitChainer = {
    },
 
    /*
+    * QUnitChainer.saveJSCoverage()
+    *
+    * Save Javascript coverage information if we are running under the cover server
+    */
+   saveJSCoverage: function (directory) {
+      if (window.jscoverage_report) {
+        directory = directory || 'QUC';
+        jscoverage_report(directory);
+      }
+   },
+
+   /*
     * QUnitChainer.logEvent(something)
     *
     * Log an internal event to the console log
@@ -1277,6 +1324,6 @@ var QUnitChainer = {
  * Log something (string or object) to the console log if the QUnitChainer or Plan flag is turned on.
  */
 function log(something) {
-   var bLog = QUnitChainer.getProperty('bLog') || (!!Plan && Plan.bLog);
+   var bLog = QUnitChainer.getProperty('bLog') || this.Plan.bLog;
    QUnitChainer.logIt(bLog, something);
 }

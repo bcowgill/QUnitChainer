@@ -24,13 +24,13 @@
     <script src="../QUnitChainer.js"></script>
 <!--[if lt IE 8 ]> <script src="../json2/json2.js"></script> <![endif]-->
     <script>
-/*jslint browser: true, sloppy: true, white: true, nomen: false, plusplus: false, maxerr: 1000, indent: 3 */    
+/*jslint browser: true, sloppy: true, white: true, nomen: false, plusplus: false, maxerr: 1000, indent: 3 */
 
 /*properties
    '-', init, nextTestPlan
 */
 
-/*global Plan, QUnitChainer 
+/*global Plan, QUnitChainer
 */
 
 var Plan = {
@@ -38,7 +38,7 @@ var Plan = {
   nextTestPlan: 'q-test2.html',
   '-': '-'
 };
-QUnitChainer.init();
+QUnitChainer.init(Plan);
 
      // --- Unittest Code goes here ---
 

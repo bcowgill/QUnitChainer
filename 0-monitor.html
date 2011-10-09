@@ -31,7 +31,7 @@ var Plan = {
   // Specify that we are the control page so that QUnitChainer initialises itself accordingly
   bControl: true
 };
-QUnitChainer.init();
+QUnitChainer.init(Plan);
 QUnitChainer.cancelAutoRun();
 jQuery(document).ready(function () {
    var message;

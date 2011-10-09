@@ -55,8 +55,8 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 40,
-   'totalSpecs': 186,
+   'totalSuites': 45,
+   'totalSpecs': 191,
    'fewerSpecsIE': 9,
    'skipTODO':     true,
    'skip':         true,
@@ -110,7 +110,8 @@ beforeEach(function () {
 
    // Prepare the QUnitChainer object to be empty
    QUnitChainer.myAlert = function () {};
-   QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+   Plan = { 'storage': "sessionStorage", 'skey': "QUCTest"};
+   QUnitChainer.init(Plan);
    QUnitChainer.clearProperties();
    QUnitChainer.clearTestResults();
 
@@ -129,6 +130,100 @@ describe("QUnitChainer.checkStorage() - test plan will not work unless browser v
    it("should support " + QUnitChainer.storage, function () {
       //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 1 ' + QUnitChainer.bLog);
       expect(QUnitChainer.checkStorage()).toEqual(true);
+   });
+});
+
+describe("QUnitChainer.logIt() - calls window.console.log (not FF, not IE)", function () {
+   var saveConsole;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to spy on logging) called');
+      saveConsole = console;
+      if (typeof console === 'undefined') {
+         console = {};
+      }
+      if (typeof console.log === 'undefined') {
+         console.log = function () {};
+      }
+      spyOn(console, 'log');
+      QUnitChainer.bIsFF = false;
+      QUnitChainer.bIsIE = false;
+   });
+   afterEach(function () {
+      QUnitChainer.bIsFF = undefined;
+      QUnitChainer.bIsIE = undefined;
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to spy on logging) called');
+      console = saveConsole;
+   });
+
+
+   it("should call window.console.log", function () {
+      QUnitChainer.logIt(true, { 'in': 'function', 'message': 'something to log' });
+      expect(console.log).toHaveBeenCalled();
+      expect(console.log.callCount).toEqual(2);
+      expect(console.log.argsForCall[0]).toEqual(['function']);
+      expect(console.log.argsForCall[1]).toEqual([{ 'in': 'function', 'message': 'something to log' }]);
+   });
+});
+
+describe("QUnitChainer.logIt() - calls window.console.log (as IE)", function () {
+   var saveConsole;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to spy on logging 2) called');
+      saveConsole = console;
+      if (typeof console === 'undefined') {
+         console = {};
+      }
+      if (typeof console.log === 'undefined') {
+         console.log = function () {};
+      }
+      spyOn(console, 'log');
+      QUnitChainer.bIsFF = false;
+      QUnitChainer.bIsIE = true;
+   });
+   afterEach(function () {
+      QUnitChainer.bIsFF = undefined;
+      QUnitChainer.bIsIE = undefined;
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to spy on logging 2) called');
+      console = saveConsole;
+   });
+
+
+   it("should call window.console.log", function () {
+      QUnitChainer.logIt(true, { 'in': 'function', 'message': 'something to log' });
+      expect(console.log).toHaveBeenCalled();
+      expect(console.log.callCount).toEqual(1);
+      expect(console.log.argsForCall[0]).toEqual(['{"in":"function","message":"something to log"}']);
+   });
+});
+
+describe("QUnitChainer.logIt() - calls window.console.log (as IE)", function () {
+   var saveConsole;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to spy on logging 2) called');
+      saveConsole = console;
+      if (typeof console === 'undefined') {
+         console = {};
+      }
+      if (typeof console.log === 'undefined') {
+         console.log = function () {};
+      }
+      spyOn(console, 'log');
+      QUnitChainer.bIsFF = false;
+      QUnitChainer.bIsIE = true;
+   });
+   afterEach(function () {
+      QUnitChainer.bIsFF = undefined;
+      QUnitChainer.bIsIE = undefined;
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to spy on logging 2) called');
+      console = saveConsole;
+   });
+
+
+   it("should call window.console.log", function () {
+      QUnitChainer.logIt(true, { 'in': 'function', 'message': 'something to log' });
+      expect(console.log).toHaveBeenCalled();
+      expect(console.log.callCount).toEqual(1);
+      expect(console.log.argsForCall[0]).toEqual(['{"in":"function","message":"something to log"}']);
    });
 });
 
@@ -191,6 +286,47 @@ describe("QUnitChainer.getURLProperties() - properties can be set from the URL",
    for (idx = 0; idx < Test.Properties.length; ++idx) {
       testPropertiesTrue(Test.Properties[idx]);
    }
+});
+
+describe("QUnitChainer.clearAllStorage - storage is clear", function () {
+   var rAllStorage;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to save storage) called');
+
+      rAllStorage = QUnitChainer.getAllStorage();
+      QUnitChainer.clearAllStorage();
+   });
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore storage) called');
+      QUnitChainer.clearAllStorage();
+      QUnitChainer.saveToStorage(rAllStorage);
+   });
+
+   it("should have nothing in storage", function () {
+      var rStorage = QUnitChainer.getAllStorage();
+      expect(rStorage).toEqual({});
+   });
+});
+
+describe("QUnitChainer.getAllStorage/saveToStorage - storage can be saved and set", function () {
+   var rAllStorage;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to save storage 2) called');
+
+      rAllStorage = QUnitChainer.getAllStorage();
+      QUnitChainer.clearAllStorage();
+      QUnitChainer.saveToStorage({ 'KEY': 'SAVETOSTORAGE' });
+   });
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore storage 2) called');
+      QUnitChainer.clearAllStorage();
+      QUnitChainer.saveToStorage(rAllStorage);
+   });
+
+   it("should have KEY: SAVETOSTORAGE in storage", function () {
+      var rStorage = QUnitChainer.getAllStorage();
+      expect(rStorage).toEqual({ 'KEY': 'SAVETOSTORAGE' });
+   });
 });
 
 describe("QUnitChainer.setProperty/getProperty/storeProperties/getProperties - storage Properties can be set true", function () {
@@ -403,8 +539,12 @@ describe("QUnitChainer.updateControlFields() Control Page - checkbox state defau
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set checkbox properties) called');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
-      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'storage': "sessionStorage",
+         'skey': "QUCTest"
+      };
+      QUnitChainer.init(Plan);
       for (idx = 0; idx < Test.Properties.length; ++idx) {
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
@@ -435,15 +575,22 @@ describe("QUnitChainer.updateControlFields() Control Page - checkbox state defau
 });
 
 describe("QUnitChainer.debugStorage() - Provide debugging info about storage", function () {
-   var idx;
+   var idx, rAllStorage;
 
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set properties and test summary storage for storage debugging) called');
+      rAllStorage = QUnitChainer.getAllStorage();
+      QUnitChainer.clearAllStorage();
       for (idx = 0; idx < Test.Properties.length; ++idx) {
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
       QUnitChainer.storeProperties();
       QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
+   });
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore storage) called');
+      QUnitChainer.clearAllStorage();
+      QUnitChainer.saveToStorage(rAllStorage);
    });
 
    it("should have storage formatted in a debug string", function () {
@@ -458,8 +605,12 @@ describe("QUnitChainer.showStorage() Control Page - Properties and Test Summary 
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set properties and test summary storage for storage dump) called');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
-      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'storage': "sessionStorage",
+         'skey': "QUCTest"
+      };
+      QUnitChainer.init(Plan);
       for (idx = 0; idx < Test.Properties.length; ++idx) {
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
@@ -486,8 +637,12 @@ describe("QUnitChainer.showTestSummary() Control Page - Banner class set for Suc
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set test storage to test for success banner');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
-      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'storage': "sessionStorage",
+         'skey': "QUCTest"
+      };
+      QUnitChainer.init(Plan);
       QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
       QUnitChainer.showControlPage('#test-dom-output');
    });
@@ -524,8 +679,12 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered, p
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set properties and test summary storage for test summary) called');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
-      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'storage': "sessionStorage",
+         'skey': "QUCTest"
+      };
+      QUnitChainer.init(Plan);
       for (idx = 0; idx < Test.Properties.length; ++idx) {
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
@@ -626,6 +785,7 @@ describe("QUnitChainer.setControlPageTestStatus() Control Page - if Plan.title e
    beforeEach(function () {
       title = document.title;
       Plan = { 'title': TITLE };
+      QUnitChainer.init(Plan);
       QUnitChainer.showControlPage('#test-dom-output');
    });
 
@@ -1063,8 +1223,12 @@ describe("QUnitChainer.clickRunTests() Control Page - Follow Chain set and docum
       spyOn(QUnitChainer, 'setLocation').andReturn();
 
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
-      QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'storage': "sessionStorage",
+         'skey': "QUCTest"
+      };
+      QUnitChainer.init(Plan);
       QUnitChainer.showControlPage('#test-dom-output');
       QUnitChainer.bindUIEvents();
       jQuery('#runTests').click();
@@ -1090,7 +1254,11 @@ describe("QUnitChainer.init() Control Page - Plan.bControl true causes init to d
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up Plan.bControl true) called');
       title = document.title;
       autoRunInterval = QUnitChainer.autoRunInterval;
-      Plan = { 'bControl': true, 'nextTestPlan': "next-test-plan.html" };
+      Plan = {
+         'bControl':     true,
+         'nextTestPlan': "next-test-plan.html",
+         'jqInjectAt':   '#test-dom-output'
+      };
 
       // Turn on auto run to check if the handler is invoked
       QUnitChainer.setProperty('bAutoRun', true);
@@ -1108,7 +1276,7 @@ describe("QUnitChainer.init() Control Page - Plan.bControl true causes init to d
 
       // Make the auto run call happen faster than normal
       QUnitChainer.autoRunInterval = 100;
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      QUnitChainer.init(Plan);
    });
 
    afterEach(function () {
@@ -1142,7 +1310,10 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit existence and no Plan.bCont
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up QUnit run mode) called');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'jqInjectAt':   '#test-dom-output'
+      };
       window.QUnit = {};
       jQuery('#test-dom-output').html(Test.qunitHTML);
 
@@ -1154,7 +1325,7 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit existence and no Plan.bCont
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      QUnitChainer.init(Plan);
    });
 
    afterEach(function () {
@@ -1187,7 +1358,10 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit mode with fixture visible d
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up QUnit run mode with visible fixture) called');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'jqInjectAt': '#test-dom-output'
+      };
       window.QUnit = {};
       jQuery('#test-dom-output').html(Test.qunitHTML);
 
@@ -1200,7 +1374,7 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit mode with fixture visible d
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      QUnitChainer.init(Plan);
    });
 
    afterEach(function () {
@@ -1230,13 +1404,15 @@ describe("QUnitChainer.begin() QUnit Run Mode - When QUnit tests begin, capture 
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      Plan = {'jqInjectAt': '#test-dom-output'};
+      QUnitChainer.init(Plan);
       QUnit.begin();
    });
 
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and QUnit 1) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
    });
 
@@ -1261,7 +1437,8 @@ describe("QUnitChainer.moduleStart() QUnit Run Mode - moduleStart records info a
       // add QUnit test plan header to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      Plan = {'jqInjectAt': '#test-dom-output'};
+      QUnitChainer.init(Plan);
       QUnitChainer.testIdx = 42;
       QUnit.begin();
       QUnit.moduleStart({"name": Test.ExpectTestModuleName});
@@ -1270,6 +1447,7 @@ describe("QUnitChainer.moduleStart() QUnit Run Mode - moduleStart records info a
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and QUnit 2) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
    });
 
@@ -1294,7 +1472,8 @@ describe("QUnitChainer.testStart() QUnit Run Mode - testStart records info about
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      Plan = {'jqInjectAt': '#test-dom-output'};
+      QUnitChainer.init(Plan);
       QUnit.begin();
       QUnit.moduleStart({"name": Test.ExpectTestModuleName});
       QUnit.testStart({"name": Test.ExpectTestName});
@@ -1327,7 +1506,8 @@ describe("QUnitChainer.testStart() QUnit Run Mode - testStart with no module() c
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      Plan = {'jqInjectAt': '#test-dom-output'};
+      QUnitChainer.init(Plan);
       QUnit.begin();
       QUnit.testStart({"name": Test.ExpectTestName});
    });
@@ -1335,6 +1515,7 @@ describe("QUnitChainer.testStart() QUnit Run Mode - testStart with no module() c
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and QUnit 3.1) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
    });
 
@@ -1359,7 +1540,8 @@ describe("QUnitChainer.moduleDone() QUnit Run Mode - moduleDone accumulates stat
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      Plan = {'jqInjectAt': '#test-dom-output'};
+      QUnitChainer.init(Plan);
 
       // Set up with a previous record of tests which pass/fail/total
       QUnitChainer.Tests.failed = 1;
@@ -1376,6 +1558,7 @@ describe("QUnitChainer.moduleDone() QUnit Run Mode - moduleDone accumulates stat
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and QUnit 4) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
    });
 
@@ -1392,7 +1575,10 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bFollowChain false and 
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with follow chain true and no next test plan) called');
       title = document.title;
-      Plan = { 'bPause':  true };
+      Plan = {
+         'bPause':  true,
+         'jqInjectAt': '#test-dom-output'
+      };
 
       window.QUnit = {};
       window.alert = function () {};
@@ -1403,7 +1589,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bFollowChain false and 
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      QUnitChainer.init(Plan);
 
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
@@ -1427,6 +1613,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bFollowChain false and 
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, QUnit, alert etc 1) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
       window.alert = rAlert;
       delete QUnitChainer.cleanTestPlan;
@@ -1459,7 +1646,11 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with follow chain true) called');
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html", 'bPause':  true };
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'bPause':  true,
+         'jqInjectAt': '#test-dom-output'
+      };
 
       window.QUnit = {};
       QUnitChainer.myAlert = function (msg) { message = msg; };
@@ -1470,7 +1661,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      QUnitChainer.init(Plan);
 
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
@@ -1496,6 +1687,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, QUnit, alert etc 2) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
       QUnitChainer.myAlert = rAlert;
       delete QUnitChainer.cleanTestPlan;
@@ -1555,7 +1747,8 @@ describe("QUnitChainer.done() QUnit Run Mode - module() not called during tests,
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      Plan = {'jqInjectAt': '#test-dom-output'};
+      QUnitChainer.init(Plan);
 
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
@@ -1577,6 +1770,7 @@ describe("QUnitChainer.done() QUnit Run Mode - module() not called during tests,
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, QUnit, alert etc 3) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
       QUnitChainer.myAlert = rAlert;
       delete QUnitChainer.cleanTestPlan;
@@ -1613,7 +1807,10 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with follow chain true and no next test plan) called');
       title = document.title;
-      Plan = { 'bPause':  true };
+      Plan = {
+         'bPause':  true,
+         'jqInjectAt': '#test-dom-output'
+      };
 
       window.QUnit = {};
       QUnitChainer.myAlert = function (msg) { message = msg; };
@@ -1624,7 +1821,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
       // add QUnit test plan header and user Agent to page
       jQuery('#test-dom-output').html('<h1 id="qunit-header">' + Test.ExpectTestPlanTitle + '</h1><h2 id="qunit-userAgent">' + Test.ExpectUserAgent + '</h2>');
 
-      QUnitChainer.init({'jqInjectAt': '#test-dom-output'});
+      QUnitChainer.init(Plan);
 
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
@@ -1652,6 +1849,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, QUnit, alert etc 4) called');
       document.title = title;
+      Plan = {};
       window.QUnit = null;
       window.alert = rAlert;
       delete QUnitChainer.cleanTestPlan;
