@@ -28,10 +28,12 @@
    };
  */
 /*jslint browser: true, sloppy: true, white: false, plusplus: true, regexp: true, maxerr: 1000, indent: 3 */
-/*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jQuery, setInterval, window
+
+/*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jscoverage_report, jQuery, setInterval, window
 */
+
 /*properties
-    '-', Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
+    '-', Plan, Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
     addClass, autoRunInterval, autoRunIntervalTimer, bAlertStorage, bAutoRun,
     bControl, bDumpStorage, bFollowChain, bHasHandlers, bIsControlPage, bIsFF,
     bIsIE, bLog, bLogEvent, bPause, bShowFailTitle, bShowFixture, bShowPassed,
@@ -41,15 +43,16 @@
     clickAlertStorage, clickAutoRun, clickClearStorage, clickClearTests,
     clickDumpStorage, clickLog, clickPause, clickRunTests, clickShowFailTitle,
     clickShowFixture, clickShowPassed, console, css, debugStorage, done,
-    dumpStorage, failed, fetchItem, getDefaultProperties, getItem,
-    getProperties, getProperty, getStorage, getTestResults, handleAutoRun,
-    header, host, href, html, in, init, initBrowser, initControlPage,
-    initTests, injectControlPage, installAutoRun, installQUnitHandlers,
-    jqInjectAt, key, location, log, logEvent, logIt, maybeAlertStorage,
-    message, module, moduleDone, moduleIdx, moduleStart, my, myAlert, name,
-    nextTestPlan, noModuleName, passed, plan, protocol, pushArray, ready,
-    removeClass, removeItem, renderPage, replace, reset, result, 'self.Tests',
-    setControlPageTestStatus, setItem, setLocation, setProperty,
+    dumpStorage, failed, fetchItem, getAllStorage, getDefaultProperties,
+    getItem, getProperties, getProperty, getStorage, getTestResults,
+    handleAutoRun, header, host, href, html, in, init, initBrowser,
+    initControlPage, initTests, injectControlPage, installAutoRun,
+    installQUnitHandlers, jqInjectAt, jscoverage_report, key, location, log,
+    logEvent, logIt, match, maybeAlertStorage, message, module, moduleDone,
+    moduleIdx, moduleStart, my, myAlert, name, nextTestPlan, noModuleName,
+    passed, plan, protocol, pushArray, ready, removeClass, removeItem,
+    renderPage, replace, reset, result, saveJSCoverage, saveToStorage,
+    'self.Tests', setControlPageTestStatus, setItem, setLocation, setProperty,
     showControlPage, showFixture, showHidePassedTests, showTestSummary, skey,
     sskey, storage, storeItem, storeProperties, storeTestResults, stringifyObj,
     testDone, testFailures, testIdx, testPasses, testStart, testStatus, text,
@@ -1254,8 +1257,8 @@ var QUnitChainer = {
     */
    saveJSCoverage: function (directory) {
       if (window.jscoverage_report) {
-        directory = directory || 'QUC';
-        jscoverage_report(directory);
+         directory = directory || 'QUC';
+         jscoverage_report(directory);
       }
    },
 

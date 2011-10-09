@@ -17,32 +17,36 @@
  */
 
 /*jslint browser: true, sloppy: true, white: false, nomen: true, plusplus: true, maxerr: 1000, indent: 3 */
-/*globals QUnit, QUnitChainer, Test, afterEach, beforeEach, cmpHTML, describe, document, itShouldHaveCheckBox, testCheckBoxFalse, testCheckBoxTrue,
-  expect, getKeys, getPosition, it, jasmine, jQuery, spyOn, window, waits, runs
+
+/*globals QUnit, QUnitChainer, Test, afterEach, beforeEach, cmpHTML, console: true, describe, document,
+  itShouldHaveCheckBox, testCheckBoxFalse, testCheckBoxTrue, expect, getKeys, getPosition, it,
+  jasmine, jQuery, spyOn, window, waits, runs
 */
+
 /*properties
     '-', CheckBoxLabel, CheckBoxes, ExpectDebugStorage, ExpectDumpStorage,
     ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName,
     ExpectTestModuleName, ExpectTestName, ExpectTestPlanTitle, ExpectUserAgent,
-    NUM_INPUTS, NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit,
+    KEY, NUM_INPUTS, NUM_PROPERTIES, NoTestRunsMessage, Properties, QUnit,
     TestRunStorageFail, TestRunStoragePass, Tests, VERSION, actual,
-    addMatchers, 'after change', alert, andCallThrough, andReturn, attr,
-    autoRunInterval, bAlertStorage, bAutoRun, bControl, bDumpStorage,
-    bFollowChain, bHasHandlers, bIsControlPage, bLog, bPause, bShowFailTitle,
-    bShowFixture, bShowPassed, begin, bindUIEvents, browserIsIE, callCount,
-    cancelAutoRun, checkStorage, checked, cleanTestPlan, cleanUserAgent,
-    clearProperties, clearTestResults, click, console, currentEnv_,
-    debugStorage, done, failed, fewerSpecsIE, getDefaultProperties,
-    getProperties, getProperty, getTestResults, getURLProperties,
-    handleAutoRun, header, host, href, html, init, initControlPage, initTests,
-    injectControlPage, innerHTML, installQUnitHandlers, jqInjectAt, location,
-    log, logIt, maybeAlertStorage, module, moduleDone, moduleIdx, moduleStart,
+    addMatchers, 'after change', alert, andCallThrough, andReturn, argsForCall,
+    attr, autoRunInterval, bAlertStorage, bAutoRun, bControl, bDumpStorage,
+    bFollowChain, bHasHandlers, bIsControlPage, bIsFF, bIsIE, bLog, bPause,
+    bShowFailTitle, bShowFixture, bShowPassed, begin, bindUIEvents,
+    browserIsIE, callCount, cancelAutoRun, checkStorage, checked,
+    cleanTestPlan, cleanUserAgent, clearAllStorage, clearProperties,
+    clearTestResults, click, console, currentEnv_, debugStorage, done, failed,
+    fewerSpecsIE, getAllStorage, getDefaultProperties, getProperties,
+    getProperty, getTestResults, getURLProperties, handleAutoRun, header, host,
+    href, html, in, init, initControlPage, initTests, injectControlPage,
+    innerHTML, installQUnitHandlers, jqInjectAt, location, log, logIt,
+    maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart,
     myAlert, name, nextSpecId_, nextSuiteId_, nextTestPlan, not, passed, plan,
-    protocol, qunitHTML, renderPage, reset, runtime, setLocation, setProperty,
-    showControlPage, showFixture, skey, skip, skipTODO, storage,
-    storeProperties, storeTestResults, stringifyObj, testDone, testIdx,
-    testPlan, testStart, tests, text, this, title, toBeDefined,
-    toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled,
+    protocol, qunitHTML, renderPage, reset, runtime, saveToStorage,
+    setLocation, setProperty, showControlPage, showFixture, skey, skip,
+    skipTODO, storage, storeProperties, storeTestResults, stringifyObj,
+    testDone, testIdx, testPlan, testStart, tests, text, this, title,
+    toBeDefined, toBeEqualAsHtml, toBeUndefined, toEqual, toHaveBeenCalled,
     toHaveBeenCalledWith, toMatch, total, totalSpecs, totalSuites,
     urlParamsTrue, userAgent, value, wipeQUnitOutput
 */
