@@ -55,8 +55,8 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 45,
-   'totalSpecs': 191,
+   'totalSuites': 46,
+   'totalSpecs': 192,
    'fewerSpecsIE': 9,
    'skipTODO':     true,
    'skip':         true,
@@ -1640,20 +1640,19 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bFollowChain false and 
    });
 });
 
-describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain true cleans user agent/test plan and stores results in storage, chaining to next test plan", function () {
-   var title = document.title, message = 'nothing', rAlert = QUnitChainer.myAlert, rTests = {};
+describe("QUnitChainer.done() QUnit Run Mode - done with bFollowChain false and bPause true cleans user agent/test plan and stores results in storage, WITHOUT pausing or chaining to next test plan", function () {
+   var title = document.title, rAlert = window.alert, rTests = {};
 
    beforeEach(function () {
-      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with follow chain true) called');
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with follow chain true and no next test plan) called');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
          'bPause':  true,
          'jqInjectAt': '#test-dom-output'
       };
 
       window.QUnit = {};
-      QUnitChainer.myAlert = function (msg) { message = msg; };
+      window.alert = function () {};
 
       QUnitChainer.cleanUserAgent = function (userAgent) { return userAgent; };
       QUnitChainer.cleanTestPlan = function (testPlan) { return testPlan; };
@@ -1668,12 +1667,10 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
       spyOn(QUnitChainer, 'cleanUserAgent').andReturn('userAgent');
       spyOn(QUnitChainer, 'cleanTestPlan').andReturn('testPlan');
 
-      spyOn(QUnitChainer, 'maybeAlertStorage').andCallThrough();
-      spyOn(QUnitChainer, 'myAlert').andCallThrough();
-      spyOn(window, 'alert').andReturn();
+      spyOn(QUnitChainer, 'myAlert').andReturn();
+      spyOn(window, 'alert').andCallThrough();
 
-      QUnitChainer.setProperty('bFollowChain', true);
-      QUnitChainer.storeProperties();
+      QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
 
       QUnit.begin();
       QUnit.moduleStart({"name": Test.ExpectTestModuleName});
@@ -1685,11 +1682,11 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
    });
 
    afterEach(function () {
-      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, QUnit, alert etc 2) called');
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title, QUnit, alert etc 1) called');
       document.title = title;
       Plan = {};
       window.QUnit = null;
-      QUnitChainer.myAlert = rAlert;
+      window.alert = rAlert;
       delete QUnitChainer.cleanTestPlan;
       delete QUnitChainer.cleanUserAgent;
    });
@@ -1701,33 +1698,60 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
       expect(QUnitChainer.cleanUserAgent).toHaveBeenCalledWith(Test.ExpectUserAgent);
       expect(QUnitChainer.cleanTestPlan).toHaveBeenCalledWith(document.location.href);
 
-      // Verify that test plan records made it into storage
-      // Expected '{"userAgent":{"testPlan":{"plan":"http://local.ft.com/qunit-chainer/SpecRunner.html","userAgent":"userAgentMan","header":"QUnit Test Example",
-      // "failed":2,"passed":4,"total":6,"log":{}}}}'
-
+      // Verify that test plan records made it into storage (including previous test run in storage)
       expect(rTests.userAgent).toBeDefined();
-      expect(rTests.userAgent.testPlan).toBeDefined();
-      expect(rTests.userAgent.testPlan.plan).toEqual(document.location.href);
-      expect(rTests.userAgent.testPlan.userAgent).toEqual(Test.ExpectUserAgent);
-      expect(rTests.userAgent.testPlan.header).toEqual(Test.ExpectTestPlanTitle);
-      expect(rTests.userAgent.testPlan.failed).toEqual(2);
-      expect(rTests.userAgent.testPlan.passed).toEqual(4);
-      expect(rTests.userAgent.testPlan.total).toEqual(6);
+      expect(rTests['after change']).toBeDefined();
 
-      // Verify that the alert dialog is shown since bPause is true
-
-      expect(QUnitChainer.maybeAlertStorage).toHaveBeenCalled();
-      expect(QUnitChainer.myAlert).toHaveBeenCalled();
+      // Verify that the alert dialog is not shown
+      expect(QUnitChainer.myAlert).not.toHaveBeenCalled();
       expect(window.alert).not.toHaveBeenCalled();
-      expect(message).toMatch(Test.ExpectMatchAlertMessage);
 
-      expect(QUnitChainer.maybeAlertStorage.callCount).toEqual(3);
-      expect(QUnitChainer.myAlert.callCount).toEqual(1);
-      expect(window.alert.callCount).toEqual(0);
+      // Verify that the next test plan is not invoked
+      expect(QUnitChainer.setLocation).not.toHaveBeenCalled();
+   });
+});
 
+describe("QUnitChainer.done() QUnit Run Mode - done with ?filter= in the document URL does not store results in storage (this represents running a single test case)", function () {
+   var title = document.title, rTests = {};
 
-      // Verify that the next test plan is invoked
-      expect(QUnitChainer.setLocation).toHaveBeenCalledWith('next-test-plan.html');
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with ?filter=) called');
+      title = document.title;
+      Plan = {
+         'nextTestPlan': "next-test-plan.html",
+         'jqInjectAt': '#test-dom-output'
+      };
+
+      window.QUnit = {};
+
+      QUnitChainer.init(Plan);
+
+      // Spy on the setLocation function and prevent it from actually changing the document.location
+      spyOn(QUnitChainer, 'setLocation').andReturn();
+
+      QUnit.begin();
+      // Override the document location to include ?filter=
+      QUnitChainer.Tests.plan = QUnitChainer.Tests.plan + "?filter=Some%20Test%20Case";
+      QUnit.moduleStart({"name": Test.ExpectTestModuleName});
+      QUnit.testStart({"name": Test.ExpectTestName});
+      QUnit.moduleDone({"name": Test.ExpectTestModuleName, "failed": 2, "passed": 4, "total": 6});
+      QUnit.done({"failed": 3, "passed": 7, "total": 10, "runtime": 164});
+
+      rTests = QUnitChainer.getTestResults();
+   });
+
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title after ?filter=) called');
+      document.title = title;
+      Plan = {};
+      window.QUnit = null;
+   });
+
+   it("should not save data to storage", function () {
+      // Verify that test plan records are not in storage
+
+      expect(rTests.userAgent).toBeUndefined();
+      expect(rTests).toEqual({});
    });
 });
 

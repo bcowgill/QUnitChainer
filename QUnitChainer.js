@@ -586,39 +586,42 @@ var QUnitChainer = {
       delete self.Tests.test;
       self.trace({ 'in': 'QUC.done()', 'self.Tests': self.Tests});
 
-      // Store the results in storage
+      if (!self.Tests.plan.match(/(\?|%3F)filter=/i)) {
+         // Only save test results to storage if running entire test plan
+         // Running a single test case puts ?filter= in the URL
+         self.Tests.userAgent = jQuery('#qunit-userAgent').text();
+         userAgent = (self.cleanUserAgent && self.cleanUserAgent(self.Tests.userAgent)) || self.Tests.userAgent;
+         testPlan = (self.cleanTestPlan && self.cleanTestPlan(self.Tests.plan)) || self.Tests.plan;
+         self.maybeAlertStorage('QUC - QUnit.done() - get test results');
+         rTestStorage = self.getTestResults();
 
-      self.Tests.userAgent = jQuery('#qunit-userAgent').text();
-      userAgent = (self.cleanUserAgent && self.cleanUserAgent(self.Tests.userAgent)) || self.Tests.userAgent;
-      testPlan = (self.cleanTestPlan && self.cleanTestPlan(self.Tests.plan)) || self.Tests.plan;
-      self.maybeAlertStorage('QUC - QUnit.done() - get test results');
-      rTestStorage = self.getTestResults();
-
-      if (typeof rTestStorage[userAgent] === 'undefined') {
-         rTestStorage[userAgent] = {};
-      }
-      rTestStorage[userAgent][testPlan] = self.Tests;
-      self.storeTestResults(rTestStorage);
-      self.maybeAlertStorage('QUC - QUnit.done() - store test results');
-
-      // Chain to next test plan if flag is set and next test plan is defined
-      if (self.getProperty('bFollowChain') && self.nextTestPlan) {
-         self.logEvent({ 'in': 'QUC.done()', 'nextTestPlan': self.nextTestPlan });
-         if (self.bPause) {
-            self.myAlert("Tests finished, chaining to " + self.nextTestPlan + "\nfrom " + document.location);
+         if (typeof rTestStorage[userAgent] === 'undefined') {
+            rTestStorage[userAgent] = {};
          }
-         self.maybeAlertStorage('QUC - QUnit.done() - chain');
-         self.setLocation(self.nextTestPlan);
-      } else if (self.getProperty('bFollowChain')) {
-         if (self.bPause) {
-            self.myAlert("All test plans finished, showing results.");
+         rTestStorage[userAgent][testPlan] = self.Tests;
+         self.storeTestResults(rTestStorage);
+         self.maybeAlertStorage('QUC - QUnit.done() - store test results');
+
+         // Chain to next test plan if flag is set and next test plan is defined
+         if (self.getProperty('bFollowChain') && self.nextTestPlan) {
+            self.logEvent({ 'in': 'QUC.done()', 'nextTestPlan': self.nextTestPlan });
+            if (self.bPause) {
+               self.myAlert("Tests finished, chaining to " + self.nextTestPlan + "\nfrom " + document.location);
+            }
+            self.maybeAlertStorage('QUC - QUnit.done() - chain');
+            self.setLocation(self.nextTestPlan);
+         } else if (self.getProperty('bFollowChain')) {
+            if (self.bPause) {
+               self.myAlert("All test plans finished, showing results.");
+            }
+            self.setProperty('bFollowChain', false);
+            self.storeProperties();
+            self.maybeAlertStorage('QUC - QUnit.done() - store properties for results page');
+            self.wipeQUnitOutput(self.jqInjectAt);
+            self.showControlPage(self.jqInjectAt);
          }
-         self.setProperty('bFollowChain', false);
-         self.storeProperties();
-         self.maybeAlertStorage('QUC - QUnit.done() - store properties for results page');
-         self.wipeQUnitOutput(self.jqInjectAt);
-         self.showControlPage(self.jqInjectAt);
       }
+
    },
 
    /*
@@ -1293,6 +1296,7 @@ var QUnitChainer = {
             try {
                somethingNice = JSON.stringify(something);
                // HTMLDivElement and probably other native objects in IE don't JSON stringify well...
+               // http://stackoverflow.com/questions/728360/copying-an-object-in-javascript
                if (somethingNice === undefined && typeof something === 'object') {
                   somethingNice = {};
                   for (key in something) {
