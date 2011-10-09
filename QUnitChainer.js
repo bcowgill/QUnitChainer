@@ -582,17 +582,18 @@ var QUnitChainer = {
     * QUnitChainer.cleanTestPlan(plan) - clean up the test plan URL before using it as a key when saving to storage
     */
    done: function (result) {
-      var userAgent, testPlan, rTestStorage, self = QUnitChainer;
+      var userAgent, testPlan, rTestStorage, rJQ, self = QUnitChainer;
       self.logEvent({ 'in': "QUC - QUnit.done()", 'result': result});
 
       delete self.Tests.module;
       delete self.Tests.test;
       self.trace({ 'in': 'QUC.done()', 'self.Tests': self.Tests});
 
-      if (!self.Tests.plan.match(/(\?|%3F)filter=/i)) {
+      if (!self.Tests.plan.match(/(\?|%3F)(filter|spec)=/i)) {
          // Only save test results to storage if running entire test plan
-         // Running a single test case puts ?filter= in the URL
-         self.Tests.userAgent = jQuery('#qunit-userAgent').text();
+         // Running a single test case puts ?filter= in the URL (?spec= for jasmine)
+         rJQ = jQuery('#qunit-userAgent');
+         self.Tests.userAgent = rJQ.length ? rJQ.text() : navigator.userAgent;
          userAgent = (self.cleanUserAgent && self.cleanUserAgent(self.Tests.userAgent)) || self.Tests.userAgent;
          testPlan = (self.cleanTestPlan && self.cleanTestPlan(self.Tests.plan)) || self.Tests.plan;
          self.maybeAlertStorage('QUC - QUnit.done() - get test results');
@@ -940,7 +941,7 @@ var QUnitChainer = {
             for (planURL in rTestResults[userAgent]) {
                if (rTestResults[userAgent].hasOwnProperty(planURL)) {
                   rTestPlan = rTestResults[userAgent][planURL];
-                  moduleStatus = (rTestPlan.failed || rTestPlan.total === 0) ? 'fail' : 'pass';
+                  moduleStatus = (rTestPlan.failed || (rTestPlan.total === 0)) ? 'fail' : 'pass';
                   if (moduleStatus === 'fail') {
                      ++failed;
                      userAgentStatus = 'fail';

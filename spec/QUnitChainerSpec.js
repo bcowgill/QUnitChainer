@@ -40,7 +40,7 @@
     getProperty, getTestResults, getURLProperties, handleAutoRun, header, host,
     href, html, in, init, initControlPage, initTests, injectControlPage,
     innerHTML, installQUnitHandlers, jqInjectAt, location, log, logIt,
-    maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart,
+    match, maybeAlertStorage, message, module, moduleDone, moduleIdx, moduleStart,
     myAlert, name, nextSpecId_, nextSuiteId_, nextTestPlan, not, passed, plan,
     protocol, qunitHTML, renderPage, reset, runtime, saveToStorage,
     setLocation, setProperty, showControlPage, showFixture, skey, skip,
@@ -1927,6 +1927,34 @@ describe("QUnitChainer.done() QUnit Run Mode - done with bPause and bFollowChain
    });
 });
 
+function chainToNextTest() {
+   // Invoke QUnitChainer in normal mode to use it to go to the next test plan
+   // We take the jasmine test results and store them as QUnitChainer results
+   Plan = {
+      'nextTestPlan': '../sample/q-test.html',
+      'storage': "localStorage",
+      'skey': "QUnitChainer"
+   };
+   QUnitChainer.init(Plan);
+   if (QUnitChainer.getProperty('bFollowChain')) {
+      var failed = 0, passed = 0, total = 0, runtime = 0, Match;
+      Match = jQuery('a.description').html().match(/(\d+) specs?, (\d+) failures? in ([\d\.]+)s/);
+      if (Match) {
+         total   = parseInt(Match[1], 10);
+         failed  = parseInt(Match[2], 10);
+         runtime = parseFloat(Match[3]) * 1000;
+         passed  = total - failed;
+         QUnitChainer.Tests.failed = failed;
+         QUnitChainer.Tests.passed = passed;
+         QUnitChainer.Tests.total = total;
+         QUnitChainer.Tests.header = 'QUnitChainer Jasmine unit tests';
+         QUnitChainer.Tests.plan = document.location.href;
+         QUnitChainer.done({ 'failed': failed, 'passed': passed, 'total': total, 'runtime': runtime });
+      }
+      QUnitChainer.setLocation(Plan.nextTestPlan);
+   }
+}
+
 describe("END", function () {
    // Final case to hide the qunit control page output at top of test plan
    // and verify that the correct number of tests have been run
@@ -1935,22 +1963,14 @@ describe("END", function () {
    });
    it("should have correct number of it() blocks", function () {
       expect(jasmine.currentEnv_.nextSpecId_).toEqual(Test.totalSpecs);
-      // TODO when enabled we get errors in debugStorage test
-      //chainToNextTest();
+
+      // Chain to the next test plan waiting a moment so that the DOM
+      // has time to be updated.
+      setTimeout(function () {
+         chainToNextTest();
+      }, 300);
    });
 });
-
-function chainToNextTest() {
-   // Invoke QUnitChainer in normal mode to use it to go to the next test plan
-   // TODO, any way to take the jasmine test results and store them as QUnitChainer results?
-   Plan = {
-      'nextTestPlan': '../sample/q-test.html'
-   };
-   QUnitChainer.init({ 'storage': "localStorage", 'skey': "QUnitChainer"});
-   if (QUnitChainer.getProperty('bFollowChain')) {
-      QUnitChainer.setLocation(Plan.nextTestPlan);
-   }
-}
 
 // TODO if log is turned on store calls to log() in storage and display on the control page in a textarea
 // TODO store order of tests in storage and edit from control page
