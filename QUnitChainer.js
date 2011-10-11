@@ -64,10 +64,11 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.5.3 $Id$',
+   VERSION: '1.5.4 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
+   hskey:   '',              // which key name to store the test plan history list in
 
    bIsControlPage:  false,   // flag set when in control page mode
    bHasHandlers:    false,   // flag set when QUnit handlers are installed
@@ -90,6 +91,7 @@ var QUnitChainer = {
 
    Properties: {},           // properties saved to storage under skey
    Tests: {},                // test plan results saved to storage under sskey
+   History: [],              // history of test plans typed into the edit box
 
    UICheckBoxes: ['bAutoRun', 'bAlertStorage', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFixture', 'bShowFailTitle'],
    QUnitHandlers: ['begin', 'done', 'moduleStart', 'moduleDone', 'testStart'],
@@ -117,13 +119,15 @@ var QUnitChainer = {
 
       this.initBrowser();
 
-      this.storage = rParams.storage || this.storage;
-      this.skey    = rParams.skey || this.skey;
+      this.storage    = rParams.storage || this.storage;
+      this.skey       = rParams.skey || this.skey;
       this.jqInjectAt = rParams.jqInjectAt || this.jqInjectAt;
-      this.sskey = this.skey + 'Settings';
+      this.sskey      = this.skey + 'Settings';
+      this.hskey      = this.skey + 'History';
 
-      this.Properties = this.getProperties();
-      this.bPause = this.getProperty('bPause') || (rParams.bPause || false);
+      this.Properties    = this.getProperties();
+      this.History       = this.getHistory();
+      this.bPause        = this.getProperty('bPause') || (rParams.bPause || false);
       this.bAlertStorage = this.getProperty('bAlertStorage') || (Plan.bAlertStorage || false);
       this.maybeAlertStorage('QUC.init() - getProperties()');
 
@@ -544,6 +548,60 @@ var QUnitChainer = {
    },
 
    /*
+    * QUnitChainer.clearHistory()
+    *
+    * Clear the history of test plans typed into the edit box from storage
+    */
+   clearHistory: function () {
+      this.removeItem(this.hskey);
+   },
+
+   /*
+    * QUnitChainer.storeHistory(raHistory)
+    *
+    * Save the history of test plans typed into the edit box to storage
+    *
+    * raHistory - optional sorted unique list of test plans which have been
+    *    typed into the edit box. Default is QUnitChainer.History
+    */
+   storeHistory: function (raHistory) {
+      raHistory = raHistory || this.History;
+      this.storeItem(this.hskey, { history: raHistory }, 'JSON');
+   },
+
+   /*
+    * QUnitChainer.getHistory()
+    *
+    * Retrieve history of test plans from storage data from the QUnitChainer key value
+    */
+   getHistory: function () {
+      var rHistory = this.fetchItem(this.hskey, 'JSON');
+      if (!rHistory) {
+         rHistory= [];
+      } else {
+         rHistory = rHistory.history || [];
+      }
+      return rHistory;
+   },
+
+   /*
+    * QUnitChainer.addHistory(testplan)
+    *
+    * Add an item to the history of test plans (does not save to storage)
+    * Items in history will be sorted and unique
+    */
+   addHistory: function (testplan) {
+      var idx;
+      for (idx = 0; idx < this.History.length; ++idx) {
+         if (testplan === this.History[idx]) {
+            return;
+         }
+      }
+      this.History.push(testplan);
+      this.History = this.History.sort();
+   },
+
+   /*
     * QUnit.begin() handler
     * is called once before running any tests.
     *
@@ -902,10 +960,18 @@ var QUnitChainer = {
     * They will be displayed within the DIV with ID qunitchainer-dump
     */
    dumpStorage: function () {
-      var rTestResults, dump = '';
+      var rTestResults, raHistory, dump = '';
       if (this.getProperty('bDumpStorage')) {
          rTestResults = this.getTestResults();
-         dump = '<hr><b>' + this.storage + '[' + this.sskey + ']</b><pre>' + this.stringifyObj(this.Properties) + '</pre><b>' + this.storage + '[' + this.skey + ']</b><pre>' + this.stringifyObj(rTestResults) + '</pre>';
+         raHistory = this.getHistory();
+         dump = [
+            '<hr><b>' + this.storage + '[' + this.sskey + ']</b>',
+            '<pre>' + this.stringifyObj(this.Properties) + '</pre>',
+            '<b>' + this.storage + '[' + this.hskey + ']</b>',
+            '<pre>' + this.stringifyObj(raHistory) + '</pre>',
+            '<b>' + this.storage + '[' + this.skey + ']</b>',
+            '<pre>' + this.stringifyObj(rTestResults) + '</pre>'
+         ].join('');
       }
       jQuery('#qunitchainer-dump').html(dump);
    },
@@ -1161,6 +1227,8 @@ var QUnitChainer = {
       this.logEvent('QUC.clickRunTests(' + JSON.stringify(event) + ')');
       this.setProperty('bFollowChain', true);
       this.storeProperties();
+      this.addHistory(this.getLocation(URL));
+      this.storeHistory();
       this.maybeAlertStorage('QUC.clickRunTests()');
       this.setLocation(URL);
    },
@@ -1214,6 +1282,10 @@ var QUnitChainer = {
     */
    setLocation: function (URL) {
       document.location = URL;
+   },
+
+   getLocation: function (URL) {
+      return URL;
    },
 
    /*

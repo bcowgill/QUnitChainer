@@ -59,13 +59,13 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 46,
-   'totalSpecs': 192,
+   'totalSuites': 47,
+   'totalSpecs': 195,
    'fewerSpecsIE': 9,
    'skipTODO':     true,
    'skip':         true,
 
-   'VERSION':        '1.5.3 $Id$',
+   'VERSION':        '1.5.4 $Id$',
    'NUM_PROPERTIES': 9,
    'NUM_INPUTS':     12,
    'Properties':     ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle', 'bShowFixture'],
@@ -88,8 +88,8 @@ var Test = {
    'TestRunStoragePass': '{"after change":{"http://localhost:8888/qunit-chainer/q-test4.html":{"plan": "http://localhost:8888/qunit-chainer/q-test4.html","userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6","header": "QUnit example - no tests","failed": 0,"passed": 1,"total": 1,"log":{}}}}',
    'NoTestRunsMessage':  "\nNo test runs are stored in sessionStorage[QUCTest] use the run tests button to run some test plans.\n",
 
-   'ExpectDumpStorage':       '<hr> \n<b>sessionStorage[QUCTestSettings]</b><pre><br>{<br>   "bFollowChain": false,<br>   "bAutoRun": true,<br>   "bPause": true,<br>   "bLog": true,<br>   "bDumpStorage": true,<br>   "bAlertStorage": true,<br> "bShowPassed": true,<br> "bShowFailTitle": true,<br> "bShowFixture": true<br>}<br></pre><b>sessionStorage[QUCTest]</b><pre><br>{<br>   "mozilla": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test3.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test3.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - no tests",<br>   "failed": 0,<br>   "passed": 0,<br>   "total": 0,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br>,<br>   "after change": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test4.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test4.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - one passing test",<br>   "failed": 0,<br>   "passed": 1,<br>   "total": 1,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br><br>}<br></pre>',
-   'ExpectDebugStorage':      'DEBUG\n' + window.location.protocol + '//' + window.location.host + '\nsessionStorage\nlength: 2\n 0: QUCTestSettings: \n {"bFollowChain":true,"bAutoRun...\n 1: QUCTest: \n {"after change":{"http://local...',
+   'ExpectDumpStorage':       '<hr> \n<b>sessionStorage[QUCTestSettings]</b><pre><br>{<br>   "bFollowChain": false,<br>   "bAutoRun": true,<br>   "bPause": true,<br>   "bLog": true,<br>   "bDumpStorage": true,<br>   "bAlertStorage": true,<br> "bShowPassed": true,<br> "bShowFailTitle": true,<br> "bShowFixture": true<br>}<br></pre><b>sessionStorage[QUCTestHistory]</b><pre><br>[<br> "test-plan.html"<br>]<br></pre><b>sessionStorage[QUCTest]</b><pre><br>{<br>   "mozilla": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test3.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test3.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - no tests",<br>   "failed": 0,<br>   "passed": 0,<br>   "total": 0,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br>,<br>   "after change": <br>{<br>   "http://localhost:8888/qunit-chainer/q-test4.html": <br>{<br>   "plan": "http://localhost:8888/qunit-chainer/q-test4.html",<br>   "userAgent": "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2) Gecko/20100115 Firefox/3.6",<br>   "header": "QUnit example - one passing test",<br>   "failed": 0,<br>   "passed": 1,<br>   "total": 1,<br>   "log": <br>{<br>   <br>}<br><br>}<br><br>}<br><br>}<br></pre>',
+   'ExpectDebugStorage':      'DEBUG\n' + window.location.protocol + '//' + window.location.host + '\nsessionStorage\nlength: 3\n 0: QUCTestSettings: \n {"bFollowChain":true,"bAutoRun...\n 1: QUCTest: \n {"after change":{"http://local...\n 2: QUCTestHistory: {"history":["test-plan.html"]}',
    'ExpectTestPlanTitle':     'QUnit Test Example',
    'ExpectUserAgent':         'userAgentMan',
    'ExpectTestModuleName':    'Failing Unit Test with setup and teardown code',
@@ -261,6 +261,49 @@ describe("QUnitChainer.getDefaultProperties() - default Properties are all false
    }
 });
 
+describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
+   it('should be defined', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 7 ' + QUnitChainer.bLog);
+      expect(QUnitChainer.stringifyObj).toBeDefined();
+   });
+
+   it('should suround braces with line breaks', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 8 ' + QUnitChainer.bLog);
+      var obj = {},
+         expected = "<br/>{<br/>   <br/>}<br/>",
+         result = QUnitChainer.stringifyObj(obj);
+
+      expect(result).toEqual(expected);
+   });
+
+   it('should suround brackets with line breaks', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 9 ' + QUnitChainer.bLog);
+      var obj = [],
+         expected = "<br/>[<br/>   <br/>]<br/>",
+         result = QUnitChainer.stringifyObj(obj);
+
+      expect(result).toEqual(expected);
+   });
+
+   it('should line break after commas', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 10 ' + QUnitChainer.bLog);
+      var obj = [1, 2],
+         expected = "<br/>[<br/>   1,<br/>   2<br/>]<br/>",
+         result = QUnitChainer.stringifyObj(obj);
+
+      expect(result).toEqual(expected);
+   });
+
+   it('should space out colons', function () {
+      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 11 ' + QUnitChainer.bLog);
+      var obj = {'this': 'that'},
+         expected = '<br/>{<br/>   "this": "that"<br/>}<br/>',
+         result = QUnitChainer.stringifyObj(obj);
+
+      expect(result).toEqual(expected);
+   });
+});
+
 // TODO implement url parameter setting?
 describe("QUnitChainer.getURLProperties() - properties can be set from the URL", function () {
    var idx, rProperties = null;
@@ -372,46 +415,42 @@ describe("QUnitChainer.setProperty/getProperty/storeProperties/getProperties - s
    }
 });
 
-describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
-   it('should be defined', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 7 ' + QUnitChainer.bLog);
-      expect(QUnitChainer.stringifyObj).toBeDefined();
+describe("QUnitChainer.clearHistory/setHistory/getHistory - history list can be saved and manipulated", function () {
+   var rAllStorage;
+   beforeEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'beforeEach(to save storage) called');
+
+      rAllStorage = QUnitChainer.getAllStorage();
+      QUnitChainer.clearHistory();
+      QUnitChainer.History = [];
+   });
+   afterEach(function () {
+      QUnitChainer.logIt(Test.bLog, 'afterEach(to restore storage) called');
+      QUnitChainer.clearAllStorage();
+      QUnitChainer.saveToStorage(rAllStorage);
    });
 
-   it('should suround braces with line breaks', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 8 ' + QUnitChainer.bLog);
-      var obj = {},
-         expected = "<br/>{<br/>   <br/>}<br/>",
-         result = QUnitChainer.stringifyObj(obj);
-
-      expect(result).toEqual(expected);
+   it("should have nothing in test plan history", function () {
+      var raHistory = QUnitChainer.getHistory();
+      expect(raHistory).toEqual([]);
    });
 
-   it('should suround brackets with line breaks', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 9 ' + QUnitChainer.bLog);
-      var obj = [],
-         expected = "<br/>[<br/>   <br/>]<br/>",
-         result = QUnitChainer.stringifyObj(obj);
-
-      expect(result).toEqual(expected);
+   it("should store things to history", function () {
+      var raHistory;
+      QUnitChainer.storeHistory(['z', 'a', 'b', 'c']);
+      raHistory = QUnitChainer.getHistory();
+      expect(raHistory).toEqual(['z', 'a', 'b', 'c']);
    });
 
-   it('should line break after commas', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 10 ' + QUnitChainer.bLog);
-      var obj = [1, 2],
-         expected = "<br/>[<br/>   1,<br/>   2<br/>]<br/>",
-         result = QUnitChainer.stringifyObj(obj);
-
-      expect(result).toEqual(expected);
-   });
-
-   it('should space out colons', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 11 ' + QUnitChainer.bLog);
-      var obj = {'this': 'that'},
-         expected = '<br/>{<br/>   "this": "that"<br/>}<br/>',
-         result = QUnitChainer.stringifyObj(obj);
-
-      expect(result).toEqual(expected);
+   it("should keep history sorted and unique", function () {
+      var raHistory;
+      QUnitChainer.addHistory('z');
+      QUnitChainer.addHistory('b');
+      QUnitChainer.addHistory('c');
+      QUnitChainer.addHistory('a');
+      QUnitChainer.storeHistory();
+      raHistory = QUnitChainer.getHistory();
+      expect(raHistory).toEqual(['a', 'b', 'c', 'z']);
    });
 });
 
@@ -589,6 +628,7 @@ describe("QUnitChainer.debugStorage() - Provide debugging info about storage", f
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
       QUnitChainer.storeProperties();
+      QUnitChainer.storeHistory(['test-plan.html']);
       QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
    });
    afterEach(function () {
@@ -619,6 +659,7 @@ describe("QUnitChainer.showStorage() Control Page - Properties and Test Summary 
          QUnitChainer.setProperty(Test.Properties[idx], true);
       }
       QUnitChainer.storeProperties();
+      QUnitChainer.storeHistory(['test-plan.html']);
       QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStorageFail));
       QUnitChainer.showControlPage('#test-dom-output');
    });
@@ -1218,7 +1259,7 @@ describe("QUnitChainer.clickClearTests() Control Page - clicking Clear Tests but
 });
 
 describe("QUnitChainer.clickRunTests() Control Page - Follow Chain set and document location changed", function () {
-   var title = 'nothing', rStorage = null;
+   var title = 'nothing', raTestPlanHistory = null, rStorage = null;
 
    beforeEach(function () {
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for Run Tests button test) called');
@@ -1229,24 +1270,31 @@ describe("QUnitChainer.clickRunTests() Control Page - Follow Chain set and docum
       title = document.title;
       Plan = {
          'nextTestPlan': "next-test-plan.html",
-         'storage': "sessionStorage",
-         'skey': "QUCTest"
+         'storage':      "sessionStorage",
+         'skey':         "QUCTest"
       };
+
+      QUnitChainer.clearHistory();
+      QUnitChainer.storeHistory(['ztest.html']);
+
       QUnitChainer.init(Plan);
       QUnitChainer.showControlPage('#test-dom-output');
       QUnitChainer.bindUIEvents();
       jQuery('#runTests').click();
       rStorage = QUnitChainer.getProperties();
+      raTestPlanHistory = QUnitChainer.getHistory();
    });
 
    afterEach(function () {
       QUnitChainer.logIt(Test.bLog, 'afterEach(to restore title and Plan 5) called');
+      QUnitChainer.clearHistory();
       document.title = title;
       Plan = {};
    });
 
    it("should have bFollowChain property set and invoked setLocation() with next test plan name", function () {
       expect(rStorage.bFollowChain).toEqual(true);
+      expect(raTestPlanHistory).toEqual(["next-test-plan.html", "ztest.html"]);
       expect(QUnitChainer.setLocation).toHaveBeenCalledWith('next-test-plan.html');
    });
 });
