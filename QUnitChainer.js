@@ -64,7 +64,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.5.4 $Id$',
+   VERSION: '1.5.5 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -779,10 +779,15 @@ var QUnitChainer = {
       }
       if (jQuery('#qunit-header').length === 0) {
          html = [
+            '<form id="chainerControl" name="chainerControl" action="#" method="post" autocomplete="on">',
             '<h1 id="qunit-header">' + title + '</h1>',
             '<h2 id="qunit-banner"></h2>',
             '<div id="qunit-testrunner-toolbar">',
             '<input type="text" id="testPlan" name="testPlan" size="40">',
+            // TODO want this button to be a submit so that autocomplete
+            // works. but then the test plan is interrupted when we simulate the onclick
+            // and had trouble preventing the submit with a .submit handler.
+            // Figure it out some time.
             '<input type="button" id="runTests" name="runTests" value="run tests">',
             '<input type="checkbox" id="bAutoRun" name="bAutoRun">',
             '<label for="bAutoRun">auto run</label>',
@@ -805,6 +810,7 @@ var QUnitChainer = {
             '<input type="checkbox" id="bShowFailTitle" name="bShowFailTitle">',
             '<label for="bShowFailTitle">FAIL in title</label>',
             '</div>',
+            '</form>',
             '<h2 id="qunit-userAgent"></h2>',
             '<p id="qunit-testresult" class="result"></p>',
             '<div id="qunit-fixture">If you can see this then the #qunit-fixture DIV in your test plans will be visible.</div>',
@@ -1105,6 +1111,9 @@ var QUnitChainer = {
       jQuery('#runTests').click(function () { rObj.clickRunTests(); });
       jQuery('#clearTests').click(function () { rObj.clickClearTests(); });
       jQuery('#clearStorage').click(function () { rObj.clickClearStorage(); });
+
+      // TODO need to handle more cases: paste, blur, keyup, etc...
+      jQuery('#testPlan').change(function () { rObj.changeTestPlan(); });
    },
 
    /*
@@ -1217,6 +1226,18 @@ var QUnitChainer = {
    },
 
    /*
+    * QUnitChainer.changeTestPlan(event)
+    *
+    * jQuery Event handler for when the Test Plan edit box contents are changed (and focus changes)
+    * set the form action to match the test plan name so submit button will go to the correct place
+    # and browser will record the edit field value for auto-completion
+    */
+   changeTestPlan: function (event) {
+      this.logEvent('QUC.changeTestPlan(' + JSON.stringify(event) + ')');
+      jQuery('#chainerControl')[0].action = this.getLocation(jQuery('#testPlan')[0].value);
+   },
+
+   /*
     * QUnitChainer.clickRunTests(event)
     *
     * jQuery Event handler for when the Run Tests button is clicked.
@@ -1225,6 +1246,7 @@ var QUnitChainer = {
    clickRunTests: function (event) {
       var URL = jQuery('#testPlan')[0].value;
       this.logEvent('QUC.clickRunTests(' + JSON.stringify(event) + ')');
+      this.changeTestPlan(event);
       this.setProperty('bFollowChain', true);
       this.storeProperties();
       this.addHistory(this.getLocation(URL));

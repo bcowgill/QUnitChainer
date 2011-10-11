@@ -65,7 +65,7 @@ var Test = {
    'skipTODO':     true,
    'skip':         true,
 
-   'VERSION':        '1.5.4 $Id$',
+   'VERSION':        '1.5.5 $Id$',
    'NUM_PROPERTIES': 9,
    'NUM_INPUTS':     12,
    'Properties':     ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle', 'bShowFixture'],
@@ -650,7 +650,7 @@ describe("QUnitChainer.showStorage() Control Page - Properties and Test Summary 
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set properties and test summary storage for storage dump) called');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan2.html",
          'storage': "sessionStorage",
          'skey': "QUCTest"
       };
@@ -683,7 +683,7 @@ describe("QUnitChainer.showTestSummary() Control Page - Banner class set for Suc
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set test storage to test for success banner');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan3.html",
          'storage': "sessionStorage",
          'skey': "QUCTest"
       };
@@ -725,7 +725,7 @@ describe("QUnitChainer.showTestSummary() Control Page - Test Summary rendered, p
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set properties and test summary storage for test summary) called');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan4.html",
          'storage': "sessionStorage",
          'skey': "QUCTest"
       };
@@ -1072,7 +1072,7 @@ describe("QUnitChainer.clickShowFailTitle() Control Page - clicking Show Fail Ti
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for Show Fail Title checkbox test) called');
 
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      Plan = { 'nextTestPlan': "next-test-plan5.html" };
       QUnitChainer.showControlPage('#test-dom-output');
       QUnitChainer.bindUIEvents();
       jQuery('#bShowFailTitle').click();
@@ -1100,7 +1100,7 @@ describe("QUnitChainer.clickShowPassed() Control Page - clicking Show Passed che
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for bShowPassed checkbox click test');
 
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      Plan = { 'nextTestPlan': "next-test-plan6.html" };
       QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
       QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
       QUnitChainer.showControlPage('#test-dom-output');
@@ -1133,7 +1133,7 @@ describe("QUnitChainer.clickShowFixture() Control Page - clicking Show Fixture c
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for bShowFixture checkbox click test');
 
       title = document.title;
-      Plan = { 'nextTestPlan': "next-test-plan.html" };
+      Plan = { 'nextTestPlan': "next-test-plan7.html" };
       QUnitChainer.init({ 'storage': "sessionStorage", 'skey': "QUCTest"});
       QUnitChainer.storeTestResults(JSON.parse(Test.TestRunStoragePass));
       QUnitChainer.showControlPage('#test-dom-output');
@@ -1267,9 +1267,14 @@ describe("QUnitChainer.clickRunTests() Control Page - Follow Chain set and docum
       // Spy on the setLocation function and prevent it from actually changing the document.location
       spyOn(QUnitChainer, 'setLocation').andReturn();
 
+      // Prevent document submission so we remain in control
+      // TODO THIS IS NOT WORKING!!
+      //jQuery('form').submit(function () {
+      //  alert('yeah!'); return false; });
+
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan8.html",
          'storage':      "sessionStorage",
          'skey':         "QUCTest"
       };
@@ -1294,8 +1299,8 @@ describe("QUnitChainer.clickRunTests() Control Page - Follow Chain set and docum
 
    it("should have bFollowChain property set and invoked setLocation() with next test plan name", function () {
       expect(rStorage.bFollowChain).toEqual(true);
-      expect(raTestPlanHistory).toEqual(["next-test-plan.html", "ztest.html"]);
-      expect(QUnitChainer.setLocation).toHaveBeenCalledWith('next-test-plan.html');
+      expect(raTestPlanHistory).toEqual(["next-test-plan8.html", "ztest.html"]);
+      expect(QUnitChainer.setLocation).toHaveBeenCalledWith('next-test-plan8.html');
    });
 });
 
@@ -1308,7 +1313,7 @@ describe("QUnitChainer.init() Control Page - Plan.bControl true causes init to d
       autoRunInterval = QUnitChainer.autoRunInterval;
       Plan = {
          'bControl':     true,
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan9.html",
          'jqInjectAt':   '#test-dom-output'
       };
 
@@ -1351,7 +1356,7 @@ describe("QUnitChainer.init() Control Page - Plan.bControl true causes init to d
       waits(200);
       runs(function () {
          expect(QUnitChainer.handleAutoRun).toHaveBeenCalled();
-         expect(QUnitChainer.setLocation).toHaveBeenCalledWith('next-test-plan.html');
+         expect(QUnitChainer.setLocation).toHaveBeenCalledWith('next-test-plan9.html');
       });
    });
 });
@@ -1363,7 +1368,7 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit existence and no Plan.bCont
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up QUnit run mode) called');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan10.html",
          'jqInjectAt':   '#test-dom-output'
       };
       window.QUnit = {};
@@ -1411,7 +1416,7 @@ describe("QUnitChainer.init() QUnit Run Mode - QUnit mode with fixture visible d
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up QUnit run mode with visible fixture) called');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan11.html",
          'jqInjectAt': '#test-dom-output'
       };
       window.QUnit = {};
@@ -1770,7 +1775,7 @@ describe("QUnitChainer.done() QUnit Run Mode - done with ?filter= in the documen
       QUnitChainer.logIt(Test.bLog, 'beforeEach(to set up for QUnit done with ?filter=) called');
       title = document.title;
       Plan = {
-         'nextTestPlan': "next-test-plan.html",
+         'nextTestPlan': "next-test-plan12.html",
          'jqInjectAt': '#test-dom-output'
       };
 
