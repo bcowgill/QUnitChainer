@@ -64,7 +64,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.5.5 $Id$',
+   VERSION: '1.5.6 $Id$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage
@@ -653,7 +653,8 @@ var QUnitChainer = {
          rJQ = jQuery('#qunit-userAgent');
          self.Tests.userAgent = rJQ.length ? rJQ.text() : navigator.userAgent;
          userAgent = (self.cleanUserAgent && self.cleanUserAgent(self.Tests.userAgent)) || self.Tests.userAgent;
-         testPlan = (self.cleanTestPlan && self.cleanTestPlan(self.Tests.plan)) || self.Tests.plan;
+         testPlan = document.location.href.replace(/\?.*$/, '');
+         testPlan = (self.cleanTestPlan && self.cleanTestPlan(testPlan)) || testPlan;
          self.maybeAlertStorage('QUC - QUnit.done() - get test results');
          rTestStorage = self.getTestResults();
 
@@ -668,7 +669,7 @@ var QUnitChainer = {
          if (self.getProperty('bFollowChain') && self.nextTestPlan) {
             self.logEvent({ 'in': 'QUC.done()', 'nextTestPlan': self.nextTestPlan });
             if (self.bPause) {
-               self.myAlert("Tests finished, chaining to " + self.nextTestPlan + "\nfrom " + document.location);
+               self.myAlert("Tests finished, chaining to " + self.nextTestPlan + "\nfrom " + self.getLocation());
             }
             self.maybeAlertStorage('QUC - QUnit.done() - chain');
             self.setLocation(self.nextTestPlan);
@@ -911,15 +912,18 @@ var QUnitChainer = {
     */
    debugStorage: function (msg, maxlength) {
       maxlength = maxlength || 128;
-      var idx, key, value, Msg = [ msg, window.location.protocol + '//' + window.location.host ],
-         rStorage = this.getStorage();
+      var idx, key, value, Keys = []; Msg = [ msg, window.location.protocol + '//' + window.location.host ],
+         rStorage = this.getStorage(), rAllStorage = this.getAllStorage();
       if (rStorage) {
          Msg.push(this.storage);
-
          Msg.push('length: ' + rStorage.length);
          for (idx = 0; idx < rStorage.length; idx++) {
-            key = rStorage.key(idx);
-            value = this.fetchItem(key);
+            Keys.push(rStorage.key(idx));
+         }
+         Keys = Keys.sort();
+         for (idx = 0; idx < Keys.length; ++idx) {
+            key = Keys[idx];
+            value = rAllStorage[key];
             if (value.length > maxlength) {
                value = "\n      " + value.substr(0, maxlength) + '...';
             }
@@ -1024,10 +1028,10 @@ var QUnitChainer = {
                   }
 
                   // jsLint says this is insecure, but it isn't
-                  planName = planURL.replace(/^.+\//, '');
+                  planName = this.getLocation(planURL).replace(/^.+\//, '');
                   planName = planName.replace(/\/\/+/g, '/');
 
-                  ModuleContent.push('<li class ="' + moduleStatus + '">\n<span class="test-message">' + rTestPlan.header + '</span> <b class="counts">(<b class="failed">' + rTestPlan.failed + '</b>, <b class="passed">' + rTestPlan.passed + '</b>, ' + rTestPlan.total + ')</b><a href="' + planURL + '">' +  planName + '</a></li>\n');
+                  ModuleContent.push('<li class ="' + moduleStatus + '">\n<span class="test-message">' + rTestPlan.header + '</span> <b class="counts">(<b class="failed">' + rTestPlan.failed + '</b>, <b class="passed">' + rTestPlan.passed + '</b>, ' + rTestPlan.total + ')</b><a href="' + this.addRandomParam(planURL) + '">' +  planName + '</a></li>\n');
                }
             }
             Content.push('<li class="' + userAgentStatus + '">\n<strong><span class="module-name">' + userAgent + '</span></strong>\n<ol>');
@@ -1298,16 +1302,48 @@ var QUnitChainer = {
    },
 
    /*
-    * QUnitChainer.setLocation(URL)
+    * QUnitChainer.getLocation(URL)
     *
-    * Set the document.location to another URL to run all the chained test plans
+    * Get the document.location.href, removing the random=\d+ from the URL if present
+    * URL optional, if omitted, uses document.location.href
     */
-   setLocation: function (URL) {
-      document.location = URL;
+   getLocation: function (URL) {
+      URL = URL || document.location.href;
+      URL = URL.replace(/(\?|\&)random=\d+/, function (unusedFullMatch, matchOne) {
+         return matchOne;
+      });
+      URL = URL.replace(/\?\&/g, '?');
+      URL = URL.replace(/\&\&/g, '&');
+      URL = URL.replace(/(\?|\&)$/, '');
+      return URL;
    },
 
-   getLocation: function (URL) {
+   /*
+    * QUnitChainer.addRandomParam(URL)
+    *
+    * Adds a random= parameter to the URL to defeat browser caching on the test plan
+    * URL - optional, uses document.location.href if omitted.
+    *
+    */
+   addRandomParam: function (URL) {
+      var rand = Math.floor(Math.random() * 1E6);
+      URL = this.getLocation(URL);
+      if (URL.match(/\?/)) {
+         URL = URL + '&random=' + rand;
+      } else {
+         URL = URL + '?random=' + rand;
+      }
       return URL;
+   },
+
+   /*
+    * QUnitChainer.setLocation(URL, bTest)
+    *
+    * Set the document.location to another URL to run all the chained test plans
+    * A random= parameter will be added to defeat browser caching on the test plan
+    */
+   setLocation: function (URL) {
+      document.location = this.addRandomParam(URL);
    },
 
    /*
