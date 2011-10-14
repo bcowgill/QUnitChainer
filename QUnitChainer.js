@@ -150,6 +150,7 @@ var QUnitChainer = {
       }
 
       this.trace('leaving QUC.init() - this.Properties ' + JSON.stringify(this.Properties));
+      return this;
    },
 
    /*
@@ -161,6 +162,7 @@ var QUnitChainer = {
       this.bAlertStorage = false;
       this.bPause = false;
       this.bLog = false;
+      return this;
    },
 
    /*
@@ -203,6 +205,7 @@ var QUnitChainer = {
       //      opera = /opera/i.test(ua),
       this.bIsFF = /firefox/i.test(ua);
       //      gecko = /gecko\//i.test(ua);
+      return this;
    },
 
    /*
@@ -220,6 +223,7 @@ var QUnitChainer = {
       } else {
          jQuery('#qunit-fixture').css('position', 'absolute').css('top', -10000).css('left', -10000);
       }
+      return this;
    },
 
    /*
@@ -265,6 +269,7 @@ var QUnitChainer = {
       };
       this.moduleIdx = -1;      // Index value for module currently being tested
       this.testIdx   = -1;      // Index value for test currently being tested
+      return this;
    },
 
    /*
@@ -280,6 +285,7 @@ var QUnitChainer = {
       this.showControlPage(jqInjectAt);
       this.bindUIEvents();
       this.installAutoRun();
+      return this;
    },
 
    /*
@@ -299,6 +305,7 @@ var QUnitChainer = {
       }
 
       this.bHasHandlers = true;
+      return this;
    },
 
    /*
@@ -417,6 +424,7 @@ var QUnitChainer = {
          this[key] = value;
       }
       this.trace('QUC.setProperty(' + key + ', ' + value + ') - this.Properties ' + JSON.stringify(this.Properties));
+      return this;
    },
 
    /*
@@ -428,6 +436,7 @@ var QUnitChainer = {
       this.trace('QUC.clearProperties(in ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties));
       this.removeItem(this.sskey);
       this.Properties = this.getDefaultProperties();
+      return this;
    },
 
    /*
@@ -438,6 +447,7 @@ var QUnitChainer = {
    clearStorage: function () {
       this.clearProperties();
       this.clearTestResults();
+      return this;
    },
 
    /*
@@ -452,6 +462,7 @@ var QUnitChainer = {
       if (rStorage) {
          rStorage.clear();
       }
+      return this;
    },
 
    /*
@@ -484,6 +495,7 @@ var QUnitChainer = {
             }
          }
       }
+      return this;
    },
 
    /*
@@ -494,6 +506,7 @@ var QUnitChainer = {
    storeProperties: function () {
       this.trace('QUC.storeProperties(to ' + this.sskey + ') - this.Properties ' + JSON.stringify(this.Properties));
       this.storeItem(this.sskey, this.Properties, 'JSON');
+      return this;
    },
 
    /*
@@ -522,6 +535,7 @@ var QUnitChainer = {
     */
    clearTestResults: function () {
       this.removeItem(this.skey);
+      return this;
    },
 
    /*
@@ -531,6 +545,7 @@ var QUnitChainer = {
     */
    storeTestResults: function (rTestResults) {
       this.storeItem(this.skey, rTestResults, 'JSON');
+      return this;
    },
 
    /*
@@ -554,6 +569,7 @@ var QUnitChainer = {
     */
    clearHistory: function () {
       this.removeItem(this.hskey);
+      return this;
    },
 
    /*
@@ -567,6 +583,7 @@ var QUnitChainer = {
    storeHistory: function (raHistory) {
       raHistory = raHistory || this.History;
       this.storeItem(this.hskey, { history: raHistory }, 'JSON');
+      return this;
    },
 
    /*
@@ -599,6 +616,7 @@ var QUnitChainer = {
       }
       this.History.push(testplan);
       this.History = this.History.sort();
+      return this;
    },
 
    /*
@@ -621,6 +639,7 @@ var QUnitChainer = {
       document.title = self.Tests.header;
 
       self.trace({ 'in': 'QUC.begin()', 'self.Tests': self.Tests});
+      return this;
    },
 
    /*
@@ -653,8 +672,10 @@ var QUnitChainer = {
          rJQ = jQuery('#qunit-userAgent');
          self.Tests.userAgent = rJQ.length ? rJQ.text() : navigator.userAgent;
          userAgent = (self.cleanUserAgent && self.cleanUserAgent(self.Tests.userAgent)) || self.Tests.userAgent;
-         testPlan = document.location.href.replace(/\?.*$/, '');
+
+         testPlan = self.cleanURL();
          testPlan = (self.cleanTestPlan && self.cleanTestPlan(testPlan)) || testPlan;
+
          self.maybeAlertStorage('QUC - QUnit.done() - get test results');
          rTestStorage = self.getTestResults();
 
@@ -684,7 +705,7 @@ var QUnitChainer = {
             self.showControlPage(self.jqInjectAt);
          }
       }
-
+      return this;
    },
 
    /*
@@ -700,6 +721,7 @@ var QUnitChainer = {
       self.moduleIdx++;
       self.testIdx = -1;
       self.Tests.module = my.name;
+      return this;
    },
 
    /*
@@ -719,6 +741,7 @@ var QUnitChainer = {
       self.Tests.failed += result.failed;
       self.Tests.passed += result.passed;
       self.Tests.total  += result.total;
+      return this;
    },
 
    /*
@@ -741,6 +764,7 @@ var QUnitChainer = {
 
       self.Tests.test = my.name;
       self.testIdx++;
+      return this;
    },
 
    /*
@@ -763,6 +787,7 @@ var QUnitChainer = {
          self.Tests.passed += result.passed;
          self.Tests.total  += result.total;
       }
+      return this;
    },
 
    /*
@@ -822,6 +847,7 @@ var QUnitChainer = {
          ].join("\n");
          jQuery(jqInjectAt).html(html);
       }
+      return this;
    },
 
    /*
@@ -835,6 +861,7 @@ var QUnitChainer = {
       for (idx = 0; idx < this.UICheckBoxes.length; ++idx) {
          jQuery('#' + this.UICheckBoxes[idx])[0].checked = this.Properties[this.UICheckBoxes[idx]];
       }
+      return this;
    },
 
    /*
@@ -847,6 +874,7 @@ var QUnitChainer = {
    wipeQUnitOutput: function (jqInjectAt) {
       jqInjectAt = jqInjectAt || 'body';
       jQuery(jqInjectAt).html('');
+      return this;
    },
 
    /*
@@ -868,6 +896,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.showControlPage() - store properties for control page');
       this.renderPage();
+      return this;
    },
 
    /*
@@ -880,6 +909,7 @@ var QUnitChainer = {
       this.showTestSummary();
       this.dumpStorage();
       this.updateControlFields();
+      return this;
    },
 
    /*
@@ -947,6 +977,7 @@ var QUnitChainer = {
          // That way unexpected debugging alert's will be caught by JSLint
          this.myAlert(this.debugStorage(msg));
       }
+      return this;
    },
 
    /*
@@ -961,6 +992,7 @@ var QUnitChainer = {
       var alert = 'alert';
       //console.log('ALERT(' + msg + ')'); // TODO
       window[alert](msg);
+      return this;
    },
 
    /*
@@ -984,6 +1016,7 @@ var QUnitChainer = {
          ].join('');
       }
       jQuery('#qunitchainer-dump').html(dump);
+      return this;
    },
 
    /*
@@ -996,6 +1029,7 @@ var QUnitChainer = {
       for (idx = 0; idx < rElements.length; ++idx) {
          rArray.push(rElements[idx]);
       }
+      return this;
    },
 
    /*
@@ -1052,6 +1086,7 @@ var QUnitChainer = {
       this.setControlPageTestStatus(overallStatus);
       jQuery('#qunit-tests').html(Content.join("\n"));
       this.showHidePassedTests();
+      return this;
    },
 
    /*
@@ -1065,6 +1100,7 @@ var QUnitChainer = {
       } else {
          jQuery('#qunit-tests').addClass('hidepass');
       }
+      return this;
    },
 
    /*
@@ -1095,6 +1131,7 @@ var QUnitChainer = {
       }
       document.title = prefix + ' ' + number + ' - ' + title;
       jQuery('#qunit-header').html(title);
+      return this;
    },
 
    /*
@@ -1118,6 +1155,7 @@ var QUnitChainer = {
 
       // TODO need to handle more cases: paste, blur, keyup, etc...
       jQuery('#testPlan').change(function () { rObj.changeTestPlan(); });
+      return this;
    },
 
    /*
@@ -1132,6 +1170,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickLog()');
       this.dumpStorage();
+      return this;
    },
 
    /*
@@ -1146,6 +1185,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickDumpStorage()');
       this.dumpStorage();
+      return this;
    },
 
    /*
@@ -1159,6 +1199,7 @@ var QUnitChainer = {
       this.setProperty('bAlertStorage', checked);
       this.storeProperties();
       this.dumpStorage();
+      return this;
    },
 
    /*
@@ -1180,6 +1221,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickPause()');
       this.dumpStorage();
+      return this;
    },
 
    /*
@@ -1201,6 +1243,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickAutoRun()');
       this.dumpStorage();
+      return this;
    },
 
    /*
@@ -1214,6 +1257,7 @@ var QUnitChainer = {
       this.maybeAlertStorage('QUC.clickClearTests()');
       this.clearTestResults();
       this.renderPage();
+      return this;
    },
 
    /*
@@ -1227,6 +1271,7 @@ var QUnitChainer = {
       this.maybeAlertStorage('QUC.clickClearStorage()');
       this.clearStorage();
       this.renderPage();
+      return this;
    },
 
    /*
@@ -1239,6 +1284,7 @@ var QUnitChainer = {
    changeTestPlan: function (event) {
       this.logEvent('QUC.changeTestPlan(' + JSON.stringify(event) + ')');
       jQuery('#chainerControl')[0].action = this.getLocation(jQuery('#testPlan')[0].value);
+      return this;
    },
 
    /*
@@ -1257,6 +1303,7 @@ var QUnitChainer = {
       this.storeHistory();
       this.maybeAlertStorage('QUC.clickRunTests()');
       this.setLocation(URL);
+      return this;
    },
 
    /*
@@ -1271,6 +1318,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickShowFailTitle()');
       this.setControlPageTestStatus();
+      return this;
    },
 
    /*
@@ -1285,6 +1333,7 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickShowPassed()');
       this.showHidePassedTests();
+      return this;
    },
 
    /*
@@ -1299,6 +1348,23 @@ var QUnitChainer = {
       this.storeProperties();
       this.maybeAlertStorage('QUC.clickShowFixture()');
       this.showFixture(checked);
+      return this;
+   },
+
+   /*
+    * QUnitChainer.cleanURL(URL)
+    *
+    * Clean the test plan url of extraneous characters.
+    *
+    * URL - optional URL to clean. defaults to the document URL if omitted.
+    */
+   cleanURL: function (URL) {
+      URL = URL || document.location.href;
+      // Remove extraneous characters from URL
+      URL = URL.replace(/\?.*$/, '');
+      URL = URL.replace(/\/\/+/g, '\/');
+      URL = URL.replace(/(https?:)\/+/, function (match) { return match + '/'; } );
+      return URL;
    },
 
    /*
@@ -1344,6 +1410,7 @@ var QUnitChainer = {
     */
    setLocation: function (URL) {
       document.location = this.addRandomParam(URL);
+      return this;
    },
 
    /*
@@ -1355,6 +1422,7 @@ var QUnitChainer = {
       this.autoRunIntervalTimer = setInterval(function () {
          QUnitChainer.handleAutoRun();
       }, this.autoRunInterval);
+      return this;
    },
 
    /*
@@ -1367,6 +1435,7 @@ var QUnitChainer = {
          clearInterval(this.autoRunIntervalTimer);
          this.autoRunIntervalTimer = undefined;
       }
+      return this;
    },
 
    /*
@@ -1379,6 +1448,7 @@ var QUnitChainer = {
       if (this.getProperty('bAutoRun')) {
          this.clickRunTests();
       }
+      return this;
    },
 
    /*
@@ -1391,6 +1461,7 @@ var QUnitChainer = {
          directory = directory || 'QUC';
          jscoverage_report(directory);
       }
+      return this;
    },
 
    /*
@@ -1400,6 +1471,7 @@ var QUnitChainer = {
     */
    logEvent: function (something) {
       this.logIt(this.bLogEvent, something);
+      return this;
    },
 
    /*
@@ -1409,6 +1481,7 @@ var QUnitChainer = {
     */
    trace: function (something) {
       this.logIt(this.bTrace, something);
+      return this;
    },
 
    /*
@@ -1451,6 +1524,7 @@ var QUnitChainer = {
          }
          window.console.log(something);
       }
+      return this;
    },
 
    '-': '-'
@@ -1464,4 +1538,5 @@ var QUnitChainer = {
 function log(something) {
    var bLog = QUnitChainer.getProperty('bLog') || this.Plan.bLog;
    QUnitChainer.logIt(bLog, something);
+   return this;
 }

@@ -61,8 +61,8 @@ var Test = {
    'bLog': false,
 
    // Total number of describe() and it() blocks to test
-   'totalSuites': 49,
-   'totalSpecs': 199,
+   'totalSuites': 50,
+   'totalSpecs': 203,
    'fewerSpecsIE': 9,
    'skipTODO':     true,
    'skip':         true,
@@ -249,12 +249,10 @@ describe("QUnitChainer.getDefaultProperties() - default Properties are all false
 
 describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    it('should be defined', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 7 ' + QUnitChainer.bLog);
       expect(QUnitChainer.stringifyObj).toBeDefined();
    });
 
    it('should suround braces with line breaks', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 8 ' + QUnitChainer.bLog);
       var obj = {},
          expected = "<br/>{<br/>   <br/>}<br/>",
          result = QUnitChainer.stringifyObj(obj);
@@ -263,7 +261,6 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    });
 
    it('should suround brackets with line breaks', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 9 ' + QUnitChainer.bLog);
       var obj = [],
          expected = "<br/>[<br/>   <br/>]<br/>",
          result = QUnitChainer.stringifyObj(obj);
@@ -272,7 +269,6 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    });
 
    it('should line break after commas', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 10 ' + QUnitChainer.bLog);
       var obj = [1, 2],
          expected = "<br/>[<br/>   1,<br/>   2<br/>]<br/>",
          result = QUnitChainer.stringifyObj(obj);
@@ -281,12 +277,26 @@ describe("QUnitChainer.stringify() - convert obj to JSON string", function () {
    });
 
    it('should space out colons', function () {
-      //QUnitChainer.logIt(Test.bLog, 'IS IT WEIRD 11 ' + QUnitChainer.bLog);
       var obj = {'this': 'that'},
          expected = '<br/>{<br/>   "this": "that"<br/>}<br/>',
          result = QUnitChainer.stringifyObj(obj);
 
       expect(result).toEqual(expected);
+   });
+});
+
+describe("QUnitChainer.cleanURL() - clean the URL", function () {
+   it('should remove after the question mark', function () {
+      expect(QUnitChainer.cleanURL('http://w.f.c?this')).toEqual('http://w.f.c');
+   });
+   it('should remove multiple forward slashes', function () {
+      expect(QUnitChainer.cleanURL('//w.f.c///what/is?this')).toEqual('/w.f.c/what/is');
+   });
+   it('should not remove the double slash in http', function () {
+      expect(QUnitChainer.cleanURL('http://w.f.c///what/is?this')).toEqual('http://w.f.c/what/is');
+   });
+   it('should not remove the double slash in https', function () {
+      expect(QUnitChainer.cleanURL('https://w.f.c///what/is?this')).toEqual('https://w.f.c/what/is');
    });
 });
 
