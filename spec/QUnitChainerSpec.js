@@ -67,7 +67,7 @@ var Test = {
    'skipTODO':     true,
    'skip':         true,
 
-   'VERSION':        '1.5.6 $Id$',
+   'VERSION':        '1.6 $Id$',
    'NUM_PROPERTIES': 9,
    'NUM_INPUTS':     12,
    'Properties':     ['bAutoRun', 'bAlertStorage', 'bFollowChain', 'bPause', 'bLog', 'bDumpStorage', 'bShowPassed', 'bShowFailTitle', 'bShowFixture'],
