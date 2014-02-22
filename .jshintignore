@@ -1,0 +1,8 @@
+**/*.min.js
+node_modules/**/*.js
+jasmine/*.js
+json2/*.js
+jscoverage/**/*.js
+qunit-test-plans/*.js
+qunit/*.js
+sinon/*.js
