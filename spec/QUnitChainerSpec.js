@@ -18,11 +18,11 @@
 
 /*jslint browser: true, sloppy: true, white: false, nomen: true, plusplus: true, maxerr: 1000, indent: 3 */
 
-/*globals QUnit, QUnitChainer, Test, afterEach, beforeEach, cmpHTML, console: true, describe, document,
+/*globals QUnit, QUnitChainer, afterEach, beforeEach, cmpHTML, console: true, describe, document,
   itShouldHaveCheckBox, testCheckBoxFalse, testCheckBoxTrue, expect, getKeys, getPosition, it,
   jasmine, jQuery, spyOn, window, waits, runs
 */
-
+/*exported Test */
 /*properties
     '-', CheckBoxLabel, CheckBoxes, ExpectDebugStorage, ExpectDumpStorage,
     ExpectEndAlertMessage, ExpectMatchAlertMessage, ExpectNoModuleName,

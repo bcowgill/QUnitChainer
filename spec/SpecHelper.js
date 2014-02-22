@@ -3,11 +3,11 @@
 */
 
 /*jslint browser: true, sloppy: true, white: false, plusplus: true, maxerr: 1000, indent: 3 */
-/*global cmpHTML, QUnitChainer, expect, getKeys, it, itShouldHaveCheckBox, jQuery, testCheckBoxFalse, testCheckBoxTrue */
+/*global QUnitChainer, expect, it, jQuery */
 /*properties
     browserIsIE, checked, css, html, replace, toEqual,
 */
-
+/*exported getKeys, cmpHTML, itShouldHaveCheckBox, testCheckBoxFalse, testCheckBoxTrue, getPosition */
 function getKeys(rObj) {
    var key = '', Keys = [];
    for (key in rObj) {
