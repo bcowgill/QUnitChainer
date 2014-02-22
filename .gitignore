@@ -1,3 +1,3 @@
-.svn
-node_modules
-jscoverage-report
+.svn/
+node_modules/
+jscoverage-report/

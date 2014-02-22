@@ -1,0 +1,5 @@
+.git/
+node_modules/
+jscoverage-report/
+pj-QUnitChainer.sublime-project
+pj-QUnitChainer.sublime-workspace
