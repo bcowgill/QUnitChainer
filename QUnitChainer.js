@@ -29,8 +29,9 @@
  */
 /*jslint browser: true, sloppy: true, white: false, plusplus: true, regexp: true, maxerr: 1000, indent: 3 */
 
-/*globals Plan, QUnit, QUnitChainer, clearInterval, console, document, jscoverage_report, jQuery, setInterval, window
+/*globals Plan, QUnit, clearInterval, document, jscoverage_report, jQuery, setInterval, window
 */
+/*exported QUnitChainer, log */
 
 /*properties
     '-', Plan, Properties, QUnit, QUnitHandlers, Tests, UICheckBoxes, VERSION,
@@ -594,7 +595,7 @@ var QUnitChainer = {
    getHistory: function () {
       var rHistory = this.fetchItem(this.hskey, 'JSON');
       if (!rHistory) {
-         rHistory= [];
+         rHistory = [];
       } else {
          rHistory = rHistory.history || [];
       }
@@ -942,7 +943,8 @@ var QUnitChainer = {
     */
    debugStorage: function (msg, maxlength) {
       maxlength = maxlength || 128;
-      var idx, key, value, Keys = []; Msg = [ msg, window.location.protocol + '//' + window.location.host ],
+      var idx, key, value, Keys = [],
+         Msg = [ msg, window.location.protocol + '//' + window.location.host ],
          rStorage = this.getStorage(), rAllStorage = this.getAllStorage();
       if (rStorage) {
          Msg.push(this.storage);
@@ -990,7 +992,7 @@ var QUnitChainer = {
       // We call alert like this so JSLint won't report it as an error
       // That way unexpected debugging alert's will be caught by JSLint
       var alert = 'alert';
-      //console.log('ALERT(' + msg + ')'); // TODO
+      //window.console.log('ALERT(' + msg + ')'); // TODO
       window[alert](msg);
       return this;
    },
@@ -1363,7 +1365,7 @@ var QUnitChainer = {
       // Remove extraneous characters from URL
       URL = URL.replace(/\?.*$/, '');
       URL = URL.replace(/\/\/+/g, '\/');
-      URL = URL.replace(/(https?:)\/+/, function (match) { return match + '/'; } );
+      URL = URL.replace(/(https?:)\/+/, function (match) { return match + '/'; });
       return URL;
    },
 
