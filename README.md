@@ -6,7 +6,7 @@
 * TDD, BDD and Continuous Testing during development
 * Useful for running tests on mobile devices.
 
-## VERSION: 1.6.1 $Id$
+## VERSION: $Rev$
 
 ## Quick Links
 
