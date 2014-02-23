@@ -37,7 +37,6 @@
     "qunitjs": "~1.14.0"
   },
   "scripts": {
-    "test": "grunt",
-    "webserver": "grunt connect:keepalive"
+    "test": "grunt"
   }
 }

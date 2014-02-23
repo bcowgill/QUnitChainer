@@ -17,8 +17,8 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ['lib/<%= pkg.name %>.js'],
-        dest: 'dist/<%= pkg.name %>.js'
+        src: ['<%= pkg.main %>'],
+        dest: 'dist/<%= pkg.main %>'
       }
     },
     uglify: {
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.min.js'
+        dest: 'dist/<%= pkg.title %>.min.js'
       }
     },
     jshint: {
@@ -46,9 +46,15 @@ module.exports = function(grunt) {
         browser: true,
         globals: {}
       },
+      package: {
+        src: ['package.json', 'Gruntfile.js']
+      },
       all: {
         src: '**/*.js'
       }
+    },
+    connect: {
+      uses_defaults: {}
     },
     qunit: {
       files: ['test/**/*.html']
@@ -68,11 +74,13 @@ module.exports = function(grunt) {
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
+  //grunt.loadNpmTasks('grunt-contrib-connect');
+  //grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('disabled', ['jshint', 'qunit', 'concat', 'uglify']);
 
 };
