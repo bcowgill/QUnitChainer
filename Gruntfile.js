@@ -20,17 +20,101 @@ module.exports = function(grunt) {
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+      ' Licensed <%= pkg.license %> */\n',
     // Task configuration.
     concat: {
-      options: {
+      "options": {
         "banner": '<%= banner %>',
         "process": process,
         "stripBanners": false
       },
-      dist: {
+      "dist": {
         src: ['<%= pkg.main %>'],
         dest: 'dist/<%= pkg.main %>'
+      },
+      "css-chainer": {
+        src: ['qunitchainer.css'],
+        dest: 'dist/qunitchainer.css'
+      },
+      "css-qunit-dark": {
+        src: ['qunit/qunit.css'],
+        dest: 'dist/qunit.css'
+      },
+      "html-control": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['0-control.html'],
+        dest: 'dist/0-control.html'
+      },
+      "html-monitor": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['0-monitor.html'],
+        dest: 'dist/0-monitor.html'
+      },
+      "pl-replace": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['replace.pl'],
+        dest: 'dist/replace.pl'
+      },
+      "sample-q1": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['sample/q-test.html'],
+        dest: 'dist/sample/q-test.html'
+      },
+      "sample-q2": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['sample/q-test2.html'],
+        dest: 'dist/sample/q-test2.html'
+      },
+      "sample-q3": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['sample/q-test3.html'],
+        dest: 'dist/sample/q-test3.html'
+      },
+      "sample-q4": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['sample/q-test4.html'],
+        dest: 'dist/sample/q-test4.html'
+      },
+      "sample-test-plan": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['sample/test-plan.js'],
+        dest: 'dist/sample/test-plan.js'
+      },
+      "sample-test-object": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['sample/test-this-object.js'],
+        dest: 'dist/sample/test-this-object.js'
+      },
+      "license": {
+        src: ['LICENSE'],
+        dest: 'dist/LICENSE'
       }
     },
     uglify: {
