@@ -65,7 +65,7 @@
  * another and then providing a control page to view the results.
  */
 var QUnitChainer = {
-   VERSION: '1.6.1 $Id$',
+   VERSION: '$Rev$',
    storage: 'localStorage',  // which type of storage to store the test results in
    skey:    'QUnitChainer',  // which key name to store the test results in the storage
    sskey:   '',              // which key name to store the settings in the storage

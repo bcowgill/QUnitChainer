@@ -1,6 +1,17 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+  // Keyword substitution
+  function process( code ) {
+    return code
+
+      // Embed version
+      .replace(/\$Rev.*\$/g, grunt.config( "pkg" ).version)
+
+      // Embed date (yyyy-mm-ddThh:mmZ)
+      .replace(/\$Date\$/g, (new Date()).toISOString().replace(/:\d+\.\d+Z$/, "Z"));
+  }
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -13,8 +24,9 @@ module.exports = function(grunt) {
     // Task configuration.
     concat: {
       options: {
-        banner: '<%= banner %>',
-        stripBanners: true
+        "banner": '<%= banner %>',
+        "process": process,
+        "stripBanners": false
       },
       dist: {
         src: ['<%= pkg.main %>'],
