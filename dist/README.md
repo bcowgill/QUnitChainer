@@ -6,7 +6,7 @@
 * TDD, BDD and Continuous Testing during development
 * Useful for running tests on mobile devices.
 
-## VERSION: $Rev$ of qunit
+## VERSION: 1.14.0 of qunit
 
 ## Quick Links
 

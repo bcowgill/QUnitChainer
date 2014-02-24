@@ -6,3 +6,4 @@ jscoverage/**/*.js
 qunit-test-plans/*.js
 qunit/*.js
 sinon/*.js
+dist/**/*.js

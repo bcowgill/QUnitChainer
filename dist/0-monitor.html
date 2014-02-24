@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+   The monitor page for QUnitChainer tests.
+   Like the control page, but will not auto run and you cannot change any settings.
+   Useful for a big screen which can run the control page with auto run in one hidden
+   tab/window of a browser to keep the status up-to-date behind the scenes.
+   Meanwhile the monitor page is visible in rotation within another browser window/tab
+   so that whenever it is loaded it gets the results from storage so that it shows
+   the latest but won't be seen running the tests.
+
+   VERSION: 1.14.0
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>QUnitChainer Control Page</title>
+    <link rel="stylesheet" href="qunitchainer.css?1.14.0" type="text/css"/>
+    <script src="jquery/jquery-1.6.2.min.js"> </script>
+    <script src="QUnitChainer.js?1.14.0"></script>
+<!--[if lt IE 8 ]> <script src="json2/json2.js"></script> <![endif]-->
+    <script>
+/*jslint browser: true, sloppy: true, white: true, nomen: false, on: false, plusplus: false, maxerr: 1000, indent: 3 */
+/*properties
+   bControl, cancelAutoRun, checkStorage, href, html, init, location, match,
+   ready, title
+*/
+/*global Plan, QUnitChainer, alert, jQuery */
+
+var Plan = {
+  title: 'QUnitChainer Monitor Page',
+  // Specify that we are the control page so that QUnitChainer initialises itself accordingly
+  bControl: true
+};
+QUnitChainer.init(Plan);
+QUnitChainer.cancelAutoRun();
+jQuery(document).ready(function () {
+   var message;
+   if (!QUnitChainer.checkStorage()) {
+      message = "This will not work as it appears your browser does not support HTML5 storage.";
+   } else if (document.location.href.match(/^file:\/\//)) {
+      message = "Your browser supports HTML5 storage but this might not work from a file:// protocol.";
+   }
+   if (message) {
+      message = message + "<br>You might need to run this from a local web server (i.e. <a href='http://apache.org/'>apache<\/a>, <a href='http://www.lighttpd.net/'>lighttpd<\/a>, <a href='http://nginx.net/'>nginx<\/a>, python -m SimpleHTTPServer 8080, perl -MHTTP::Server::Brick -e '$s=HTTP::Server::Brick->new(port=>8080); $s->mount(\"/\"=>{path=>\"/tmp\"}); $s->start') or through a web proxy (i.e. <a href='http://www.charlesproxy.com/'>Charles<\/a>)";
+      jQuery('#qunit-userAgent').html(message);
+   }
+   jQuery('#qunit-testrunner-toolbar').html('');
+});
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

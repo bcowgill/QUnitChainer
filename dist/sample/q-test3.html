@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<!--
+   1.14.0
+
+   QUnit + QUnitChainer Sample Test plan
+   https://github.com/bcowgill/QUnitChainer
+   http://docs.jquery.com/Qunit
+   http://www.swift-lizard.com/2009/11/24/test-driven-development-with-jquery-qunit/
+   http://net.tutsplus.com/tutorials/javascript-ajax/how-to-test-your-javascript-code-with-qunit/
+   http://twoguysarguing.wordpress.com/2010/11/02/make-javascript-tests-part-of-your-build-qunit-rhino/
+   http://martinfowler.com/articles/nonDeterminism.html
+
+   BDD
+   https://github.com/joshuaclayton/specit
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Tests with QUnitChainer TEMPLATE</title>
+    <link rel="stylesheet" href="../qunit/qunit.css" type="text/css"/>
+    <script src="../qunit/qunit.js"></script>
+
+    <script src="../jquery/jquery-1.6.2.min.js"> </script>
+    <script src="../QUnitChainer.js"></script>
+<!--[if lt IE 8 ]> <script src="../json2/json2.js"></script> <![endif]-->
+    <script>
+/*jslint browser: true, sloppy: true, white: true, nomen: false, plusplus: false, maxerr: 1000, indent: 3 */
+
+/*properties
+    '-', cleanTestPlan, cleanUserAgent, init, nextTestPlan, ready, replace
+*/
+
+/*global Plan, QUnitChainer, document, jQuery, module
+*/
+
+var Plan = {
+  // Specify the test plan to run after this one
+  nextTestPlan: 'q-test4.html',
+  '-': '-'
+};
+QUnitChainer.init(Plan);
+
+     // --- Unittest Code goes here ---
+
+// Clean up the user agent and test plan name for storage
+QUnitChainer.cleanUserAgent = function (/* userAgent */) {
+   return 'mozilla';
+};
+QUnitChainer.cleanTestPlan = function (testPlan) {
+   testPlan = testPlan.replace('http://sandbox.bsac.com/ipad-testing/', '');
+   return testPlan;
+};
+
+jQuery(document).ready(function() {
+
+   module("Module with no Tests");
+
+});
+
+    </script>
+
+    <!-- Object being tested is included here -->
+
+    <!-- Unit test plan is in separate javascript -->
+
+  </head>
+  <body>
+    <h1 id="qunit-header">QUnit example - no tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests">
+    </ol>
+
+    <!--
+       The fixture is any DOM structure you need in place for each test.
+       It won't be visible on screen but the initial state is recorded
+       and restored at the start of each test.
+    -->
+    <div id="qunit-fixture"></div>
+  </body>
+</html>
