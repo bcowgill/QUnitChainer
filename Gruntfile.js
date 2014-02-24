@@ -112,7 +112,19 @@ module.exports = function(grunt) {
         src: ['sample/test-this-object.js'],
         dest: 'dist/sample/test-this-object.js'
       },
+      "readme": {
+        options: {
+          "banner": '',
+          "process": process
+        },
+        src: ['README.md'],
+        dest: 'dist/README.md'
+      },
       "license": {
+        options: {
+          "banner": '',
+          "process": process
+        },
         src: ['LICENSE'],
         dest: 'dist/LICENSE'
       }
